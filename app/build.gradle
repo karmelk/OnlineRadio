@@ -1,35 +1,67 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion compileVersion
+    buildToolsVersion buildVersion
     defaultConfig {
-        applicationId "com.kmworks"
-        minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        applicationId "com.onlineradio"
+        minSdkVersion minVersion
+        targetSdkVersion targetVersion
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
+    dataBinding {
+        enabled true
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    implementation project(path: ':entities')
+    implementation project(path: ':data')
+    implementation project(path: ':domain')
+    implementation project(path: ':appbase')
+    implementation supportDependencies.appcompat
+    implementation supportDependencies.kotlin
+    implementation supportDependencies.coreKtx
+    implementation supportDependencies.junit
+    implementation supportDependencies.junitAndroid
+    implementation supportDependencies.espressoCore
+    implementation supportDependencies.constraintlayout
+    implementation supportDependencies.lifecycle
+    implementation supportDependencies.lifecycleViewmodel
+    implementation supportDependencies.koinAndroid
+    implementation supportDependencies.koinViewModel
+    implementation supportDependencies.coroutines
+    implementation supportDependencies.coroutinesAndroid
+    implementation supportDependencies.navigationFragment
+    implementation supportDependencies.navigationUi
+    implementation supportDependencies.cardView
+    implementation supportDependencies.glide
+    kapt supportDependencies.dataBinding
+    implementation supportDependencies.legacySupport
+    annotationProcessor supportDependencies.glideCompiler
+
 }

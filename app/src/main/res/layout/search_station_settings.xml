@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ic_default_radio">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icCoinLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_15"
+        app:layout_constraintEnd_toStartOf="@+id/fabLike"
+        app:layout_constraintTop_toTopOf="@+id/fabLike"
+        app:srcCompat="@drawable/ic_default_radio" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLike"
+        style="@style/AlertDialog.AppCompat"
+        android:layout_width="@dimen/dp_60"
+        android:layout_height="@dimen/dp_60"
+        android:layout_marginTop="@dimen/dp_20"
+        app:backgroundTint="@color/colorWhite"
+        app:fabCustomSize="@dimen/dp_60"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings_black_24dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icCoinRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_32"
+        app:layout_constraintStart_toEndOf="@+id/fabLike"
+        app:layout_constraintTop_toTopOf="@+id/fabLike"
+        app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/oneCoinOneLike"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="@string/balance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icCoinRight" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/oneCoinOneLikeDesc1"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_17"
+        android:layout_marginTop="@dimen/dp_9"
+        android:layout_marginEnd="@dimen/dp_17"
+        android:text="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/oneCoinOneLike" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/oneCoinOneLikeDesc2"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_17"
+        android:layout_marginTop="@dimen/dp_9"
+        android:layout_marginEnd="@dimen/dp_17"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:text="@string/all_notification"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/oneCoinOneLikeDesc1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

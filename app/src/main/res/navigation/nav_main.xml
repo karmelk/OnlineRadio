@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.onlinestation.fragment.primarygenre.PrimaryGenreFragment"
+        android:label="PrimaryGenderFragment"
+        tools:layout="@layout/fragment_primary_genre">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_secondary_genre"
+            app:destination="@id/navigation_secondary_genre" />
+        <argument
+            android:name="secondaryGenreID"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_random_station"
+        android:name="com.onlinestation.fragment.randomradios.RandomFragment"
+        android:label="RandomFragment"
+        tools:layout="@layout/fragment_random" />
+
+    <fragment
+        android:id="@+id/navigation_favorite"
+        android:name="com.onlinestation.fragment.favorite.FavoriteFragment"
+        android:label="FavoriteFragment"
+        tools:layout="@layout/fragment_favorite" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.onlinestation.fragment.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/navigation_secondary_genre"
+        android:name="com.onlinestation.fragment.secondarygenre.SecondaryGenreFragment"
+        android:label="SecondaryGenreFragment"
+        tools:layout="@layout/fragment_secondary_genre">
+        <action
+            android:id="@+id/action_navigation_secondary_genre_to_navigation_stations_by_genre_id"
+            app:destination="@id/navigation_stations_by_genre_id" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_stations_by_genre_id"
+        android:name="com.onlinestation.fragment.stationsbygenreid.StationListByGenreIdFragment"
+        android:label="StationListByGenreIdFragment"
+        tools:layout="@layout/fragment_station_list_by_genre_id">
+        <argument
+            android:name="genreId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_search_radios"
+        android:name="com.onlinestation.fragment.searchradios.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+
+    </fragment>
+
+</navigation>
