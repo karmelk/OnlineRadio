@@ -15,7 +15,11 @@ class FavoriteViewModel(private val favoriteStationsInteractor: FavoriteStations
     private val _getStationsListData: MutableLiveData<MutableList<StationItemLocal>> by lazy { MutableLiveData<MutableList<StationItemLocal>>() }
     val getStationsListData: LiveData<MutableList<StationItemLocal>> = _getStationsListData
 
-    fun getFavoriteStationList() {
+    init {
+        getFavoriteStationList()
+    }
+
+    private fun getFavoriteStationList() {
         viewModelScope.launch(Dispatchers.Unconfined) {
             withContext(Dispatchers.Main) {
                 _getStationsListData.value = favoriteStationsInteractor.getAllStationDataLocalDB()
@@ -28,4 +32,5 @@ class FavoriteViewModel(private val favoriteStationsInteractor: FavoriteStations
             favoriteStationsInteractor.removeStationDataLocalDB(itemId)
         }
     }
+
 }

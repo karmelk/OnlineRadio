@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.onlinestation.R
 import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
-import kotlinx.android.synthetic.main.item_genre.view.*
 import kotlinx.android.synthetic.main.item_station.view.*
 import java.util.*
 
@@ -30,10 +29,7 @@ class RandomStationAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
         holder.bindItem(itemList[position])
-
-
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -41,7 +37,7 @@ class RandomStationAdapter(
         fun bindItem(item: StationItemLocal) {
             with(itemView) {
                 stationName.text = item.name
-                genreName.text = "Stations" + item.genre
+                stationsCount.text = "Stations" + item.genre
                 Glide.with(context)
                     .load(item.logo)
                     .placeholder(

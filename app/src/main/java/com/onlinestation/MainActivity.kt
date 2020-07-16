@@ -1,7 +1,10 @@
 package com.onlinestation
 
+import android.content.ComponentName
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,11 +19,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util.getUserAgent
 import com.google.android.material.tabs.TabLayout
 import com.onlinestation.adapter.PopUpGenderAdapter
 import com.onlinestation.entities.localmodels.GenderItem
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.gendermodels.PrimaryGenreItem
 import com.onlinestation.fragment.searchradios.SearchFragment
 import com.onlinestation.onlineradioapp.MainViewModel
 import com.onlinestation.utils.Constants.Companion.defaultUserBalanceCount
@@ -29,6 +35,7 @@ import com.onlinestation.utils.getCurrentFragment
 import com.onlinestation.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     private var searchKeyword: String? = null
     private var selectedGenderName: String? = null
     private var genreList: MutableList<GenderItem>? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -55,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     private fun showSearchView(genreList: MutableList<GenderItem>) {
         this.genreList = genreList
         icSearchIcon.visibility = GONE
-        toolbarTitle.visibility = GONE
+        appName.visibility = GONE
         searchContainer.visibility = VISIBLE
         tabLayout.visibility = GONE
         editSearch.requestFocus()
@@ -64,13 +73,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initClickListener() {
+        appName.setOnClickListener {
+
+            mainViewModel.loadRadio(this)
+        }
         icSearchIcon.setOnClickListener {
             mainViewModel.getGenderListDB()
         }
         icCloseSearch.setOnClickListener {
             searchContainer.visibility = GONE
             icSearchIcon.visibility = VISIBLE
-            toolbarTitle.visibility = VISIBLE
+            appName.visibility = VISIBLE
             editSearch.text?.clear()
             tabLayout.visibility = VISIBLE
             selectedGenderName = null
@@ -79,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         }
         icSettings.setOnClickListener {
             genreList?.apply {
-                selectCategory(it,this)
+                selectCategory(it, this)
             }
         }
         icSearch.setOnClickListener {
@@ -116,13 +129,6 @@ class MainActivity : AppCompatActivity() {
             resources.getDimensionPixelSize(R.dimen.dp_180),
             resources.getDimensionPixelSize(R.dimen.dp_240),
             true
-        )
-        val list: MutableList<GenderItem> = mutableListOf(
-            GenderItem("All", true),
-            GenderItem("Pop", false),
-            GenderItem("Dance", false),
-            GenderItem("Rep", false),
-            GenderItem("Jaz", false)
         )
         val customAdapter = PopUpGenderAdapter(
             this,
@@ -181,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         if (searchContainer.isVisible) {
             searchContainer.visibility = GONE
             icSearchIcon.visibility = VISIBLE
-            toolbarTitle.visibility = VISIBLE
+            appName.visibility = VISIBLE
             editSearch.text?.clear()
             tabLayout.visibility = VISIBLE
             hideKeyboard(this, window.decorView)
@@ -191,4 +197,12 @@ class MainActivity : AppCompatActivity() {
         }
         super.onBackPressed()
     }
+
+
+    private fun extractMediaSourceFromUri(uri: Uri): MediaSource {
+        val userAgent = getUserAgent(this, "Exo")
+        return ExtractorMediaSource.Factory(DefaultDataSourceFactory(this, userAgent))
+            .setExtractorsFactory(DefaultExtractorsFactory()).createMediaSource(uri)
+    }
+
 }

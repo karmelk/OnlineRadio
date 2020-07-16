@@ -14,4 +14,5 @@ val interactorModule = module {
     single<SettingsInteractor> { SettingsUseCase(get()) }
     single<SearchStationInteractor> { SearchStationUseCase(get(), get()) }
     single<MainActivityInteractor> { MainActivityUseCase(get()) }
+    single<PlayStationInteractor> { PlayStationUseCase() }
 }

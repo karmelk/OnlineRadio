@@ -31,6 +31,7 @@ ext {
     glideVersion = '4.9.0'
     dataBindingVersion = '2.3.1'
     legacySupportVersion = '1.0.0'
+    exoplayerVersion = '2.9.4'
 
 //Support Libraries dependencies
     supportDependencies = [
@@ -61,7 +62,7 @@ ext {
             glideCompiler     : "com.github.bumptech.glide:compiler:${glideVersion}",
             dataBinding       : "com.android.databinding:compiler:${dataBindingVersion}",
             legacySupport       : "androidx.legacy:legacy-support-v4:${legacySupportVersion}",
-
+            exoplayer       : "com.google.android.exoplayer:exoplayer:${exoplayerVersion}",
 
     ]
 }

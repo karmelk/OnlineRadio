@@ -28,7 +28,6 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-
 }
 
 dependencies {
@@ -44,4 +43,6 @@ dependencies {
     testImplementation supportDependencies.junit
     androidTestImplementation  supportDependencies.junitAndroid
     androidTestImplementation supportDependencies.espressoCore
+    implementation supportDependencies.legacySupport
+
 }

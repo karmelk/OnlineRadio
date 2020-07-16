@@ -1,5 +1,6 @@
 package com.onlinestation.onlineradioapp
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.onlinestation.domain.interactors.SettingsInteractor
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.localmodels.GenderItem
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
+import com.onlinestation.utils.lOADrADIO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -34,6 +36,13 @@ class MainViewModel(
                     _primaryGenreDB.value = userData.data
                 }
             }
+        }
+    }
+
+    fun loadRadio(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val player=  lOADrADIO(context)
+            player.loadRadio()
         }
     }
 }

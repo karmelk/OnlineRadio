@@ -13,24 +13,20 @@ class HeaderInterceptor() : Interceptor,
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        request = if (originalRequest.url.toString().contains("/identity/login-mobile")) {
+     /*   request = if (originalRequest.url.toString().contains("/identity/login-mobile")) {
             val requestBuilder = originalRequest.newBuilder()
                     .method(originalRequest.method, originalRequest.body)
             requestBuilder.build()
 
         } else {
-            val requestBuilder = originalRequest.newBuilder()
-                    .method(originalRequest.method, originalRequest.body)
-            requestBuilder.build()
-        }
 
+        }*/
+        val requestBuilder = originalRequest.newBuilder()
+            .method(originalRequest.method, originalRequest.body)
+        request=  requestBuilder.build()
 
         return chain.proceed(request)
 
     }
-
-
-    private fun Request.Builder.addHeaders(token: String) =
-            this.apply { header("Authorization", "Bearer $token") }
 
 }

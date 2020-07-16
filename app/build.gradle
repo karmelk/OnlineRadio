@@ -37,8 +37,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-
     implementation project(path: ':entities')
     implementation project(path: ':data')
     implementation project(path: ':domain')
@@ -63,5 +61,6 @@ dependencies {
     kapt supportDependencies.dataBinding
     implementation supportDependencies.legacySupport
     annotationProcessor supportDependencies.glideCompiler
+    implementation supportDependencies.exoplayer
 
 }

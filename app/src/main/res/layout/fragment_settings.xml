@@ -6,9 +6,7 @@
     <data>
 
         <import type="com.onlinestation.entities.responcemodels.OwnerUserBalance" />
-
         <import type="com.onlinestation.utils.Constants" />
-
         <variable
             name="viewModel"
             type="com.onlinestation.fragment.settings.viewmodel.SettingsViewModel" />
@@ -44,7 +42,6 @@
             android:text="@string/coin_desc"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/sp_12"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/globalSettings" />
 
