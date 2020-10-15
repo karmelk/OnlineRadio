@@ -30,6 +30,9 @@ android {
             targetCompatibility JavaVersion.VERSION_1_8
         }
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     dataBinding {
         enabled true
     }
@@ -48,8 +51,7 @@ dependencies {
     implementation supportDependencies.junitAndroid
     implementation supportDependencies.espressoCore
     implementation supportDependencies.constraintlayout
-    implementation supportDependencies.lifecycle
-    implementation supportDependencies.lifecycleViewmodel
+    implementation supportDependencies.material
     implementation supportDependencies.koinAndroid
     implementation supportDependencies.koinViewModel
     implementation supportDependencies.coroutines
@@ -58,7 +60,7 @@ dependencies {
     implementation supportDependencies.navigationUi
     implementation supportDependencies.cardView
     implementation supportDependencies.glide
-    kapt supportDependencies.dataBinding
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
     implementation supportDependencies.legacySupport
     annotationProcessor supportDependencies.glideCompiler
     implementation supportDependencies.exoplayer

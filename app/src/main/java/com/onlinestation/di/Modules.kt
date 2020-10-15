@@ -7,8 +7,7 @@ import com.onlinestation.fragment.randomradios.viewmodel.RandomStationViewModel
 import com.onlinestation.fragment.searchradios.viewmodel.SearchViewModel
 import com.onlinestation.fragment.secondarygenre.viewmodel.SecondaryGenreViewModel
 import com.onlinestation.fragment.settings.viewmodel.SettingsViewModel
-import com.onlinestation.onlineradioapp.MainViewModel
-import com.onlinestation.service.RadioService
+import com.onlinestation.activity.MainViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

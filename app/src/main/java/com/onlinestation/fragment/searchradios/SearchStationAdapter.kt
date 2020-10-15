@@ -15,8 +15,7 @@ class SearchStationAdapter(
     var itemList: MutableList<StationItemLocal>,
     var addFavorite: (item: StationItemLocal) -> Unit,
     var removeFavorite: (item: StationItemLocal) -> Unit
-) :
-    RecyclerView.Adapter<SearchStationAdapter.MyViewHolder>() {
+) : RecyclerView.Adapter<SearchStationAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -29,10 +28,7 @@ class SearchStationAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
         holder.bindItem(itemList[position])
-
-
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -49,6 +45,7 @@ class SearchStationAdapter(
                             R.drawable.ic_default_station
                         )
                     )
+                    .circleCrop()
                     .into(stationLogo)
                 favorite.setOnClickListener {
                     if (!item.isFavorite) {

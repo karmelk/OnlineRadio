@@ -1,4 +1,4 @@
-package com.onlinestation
+package com.onlinestation.activity
 
 import android.content.Context
 import android.os.Bundle
@@ -8,13 +8,14 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.appcompat.app.AppCompatActivity
+import com.onlinestation.R
 import com.onlinestation.service.MediaBrowserHelper
 import com.onlinestation.service.PlayingRadioLibrary
 import com.onlinestation.service.RadioService
 import kotlinx.android.synthetic.main.activity_test.*
 
 class TestActivity : AppCompatActivity() {
-    private var mMediaBrowserHelper: MediaBrowserHelper? = null
+    private lateinit var mMediaBrowserHelper: MediaBrowserHelper
     private var mIsPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,35 +24,35 @@ class TestActivity : AppCompatActivity() {
         initClickListener()
         PlayingRadioLibrary.init()
         mMediaBrowserHelper = MediaBrowserConnection(this)
-        mMediaBrowserHelper?.registerCallback(MediaBrowserListener())
+        mMediaBrowserHelper.registerCallback(MediaBrowserListener())
     }
-
 
     private fun initClickListener() {
         button_previous.setOnClickListener {
-            mMediaBrowserHelper!!.getTransportControls()!!.skipToPrevious()
+            mMediaBrowserHelper.getTransportControls()!!.skipToPrevious()
         }
         button_play.setOnClickListener {
             if (mIsPlaying) {
-                mMediaBrowserHelper!!.getTransportControls()!!.pause()
+                mMediaBrowserHelper.getTransportControls()!!.pause()
             } else {
-                mMediaBrowserHelper!!.getTransportControls()!!.play()
+                mMediaBrowserHelper.onStart()
+                mMediaBrowserHelper.getTransportControls()!!.play()
             }
         }
         button_next.setOnClickListener {
-            mMediaBrowserHelper!!.getTransportControls()!!.skipToNext()
+            mMediaBrowserHelper.getTransportControls()!!.skipToNext()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        mMediaBrowserHelper!!.onStart()
+        mMediaBrowserHelper.onStart()
     }
 
     override fun onStop() {
         super.onStop()
         // mSeekBarAudio.disconnectController()
-        mMediaBrowserHelper!!.onStop()
+        mMediaBrowserHelper.onStop()
     }
 
     private class MediaBrowserConnection(context: Context) : MediaBrowserHelper(context,

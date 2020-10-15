@@ -20,7 +20,7 @@ class OnlineRadioApp : Application() {
         }
     }
 
-    val modules = listOf(
+    private val modules = listOf(
             apiModule,
             databaseModule,
             repositoryModule,

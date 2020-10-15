@@ -1,16 +1,18 @@
-package com.onlinestation.onlineradioapp
+package com.onlinestation.activity
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kmworks.appbase.BaseViewModel
+import com.kmworks.appbase.command.Command
 import com.onlinestation.domain.interactors.MainActivityInteractor
 import com.onlinestation.domain.interactors.SettingsInteractor
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.localmodels.GenderItem
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
 import com.onlinestation.utils.lOADrADIO
+import com.kmworks.appbase.command.Command.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -40,9 +42,6 @@ class MainViewModel(
     }
 
     fun loadRadio(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val player=  lOADrADIO(context)
-            player.loadRadio()
-        }
+            _command.value = PlayStation(10)
     }
 }

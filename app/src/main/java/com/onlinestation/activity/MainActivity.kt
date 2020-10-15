@@ -1,10 +1,14 @@
-package com.onlinestation
+package com.onlinestation.activity
 
-import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -24,21 +28,29 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util.getUserAgent
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.tabs.TabLayout
+import com.kmworks.appbase.Constants.Companion.defaultUserBalanceCount
+import com.kmworks.appbase.Constants.Companion.defaultUserID
+import com.kmworks.appbase.command.Command.PlayStation
+import com.onlinestation.R
 import com.onlinestation.adapter.PopUpGenderAdapter
 import com.onlinestation.entities.localmodels.GenderItem
 import com.onlinestation.fragment.searchradios.SearchFragment
-import com.onlinestation.onlineradioapp.MainViewModel
-import com.onlinestation.utils.Constants.Companion.defaultUserBalanceCount
-import com.onlinestation.utils.Constants.Companion.defaultUserID
+import com.onlinestation.service.MediaBrowserHelper
+import com.onlinestation.service.PlayingRadioLibrary
+import com.onlinestation.service.RadioService
 import com.onlinestation.utils.getCurrentFragment
 import com.onlinestation.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_test.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
-
+    private val TAG = MainActivity::class.java.simpleName
     private val mainViewModel: MainViewModel by viewModel()
     private lateinit var navHostFragment: NavHostFragment
     lateinit var nav: NavController
@@ -46,19 +58,63 @@ class MainActivity : AppCompatActivity() {
     private var searchKeyword: String? = null
     private var selectedGenderName: String? = null
     private var genreList: MutableList<GenderItem>? = null
-
+    private lateinit var mMediaBrowserHelper: MediaBrowserHelper
+    private var mIsPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initViewModel()
+        initObserver()
         initData()
         setupView()
+        PlayingRadioLibrary.init()
+        setupMediaBrowserHelper()
         initClickListener()
+        MobileAds.initialize(this) {}
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+        adView.adListener = object :AdListener(){
+            override fun onAdClosed() {
+                Log.i(TAG, "onAdClosed: ")
+            }
+
+            override fun onAdFailedToLoad(p0: Int) {
+                Log.i(TAG, "onAdFailedToLoad: ")
+            }
+
+            override fun onAdLeftApplication() {
+                Log.i(TAG, "onAdLeftApplication: ")
+            }
+
+            override fun onAdOpened() {
+                Log.i(TAG, "onAdOpened: ")
+            }
+
+            override fun onAdLoaded() {
+                Log.i(TAG, "onAdLoaded: ")
+            }
+
+            override fun onAdClicked() {
+                Log.i(TAG, "onAdClicked: ")   
+            }
+        }
     }
 
-    private fun initViewModel() {
+
+
+    private fun initObserver() {
         mainViewModel.primaryGenreDB.observe(this, Observer(::showSearchView))
+        mainViewModel.command.observe(this, {
+            when (it) {
+                is PlayStation -> {
+                    if (mIsPlaying) {
+                        mMediaBrowserHelper.getTransportControls()!!.pause()
+                    } else {
+                        mMediaBrowserHelper.getTransportControls()!!.play()
+                    }
+                }
+            }
+        })
     }
 
     private fun showSearchView(genreList: MutableList<GenderItem>) {
@@ -74,7 +130,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initClickListener() {
         appName.setOnClickListener {
-
             mainViewModel.loadRadio(this)
         }
         icSearchIcon.setOnClickListener {
@@ -205,4 +260,76 @@ class MainActivity : AppCompatActivity() {
             .setExtractorsFactory(DefaultExtractorsFactory()).createMediaSource(uri)
     }
 
+    private fun setupMediaBrowserHelper() {
+        mMediaBrowserHelper = MediaBrowserConnection(this)
+        mMediaBrowserHelper.registerCallback(MediaBrowserListener())
+    }
+    override fun onStart() {
+        super.onStart()
+        mMediaBrowserHelper.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // mSeekBarAudio.disconnectController()
+        mMediaBrowserHelper.onStop()
+    }
+
+    private class MediaBrowserConnection(context: Context) : MediaBrowserHelper(
+        context,
+        RadioService::class.java
+    ) {
+
+        override fun onConnected(mediaController: MediaControllerCompat) {
+            // mSeekBarAudio.setMediaController(mediaController)
+        }
+
+        override fun onChildrenLoaded(
+            parentId: String,
+            children: List<MediaBrowserCompat.MediaItem?>
+        ) {
+            super.onChildrenLoaded(parentId, children)
+            val mediaController = getMediaController()
+
+            // Queue up all media items for this simple sample.
+            for (mediaItem in children) {
+                mediaController.addQueueItem(mediaItem!!.description)
+            }
+
+            // Call prepare now so pressing play just works.
+            mediaController.transportControls.prepare()
+        }
+    }
+
+    private inner class MediaBrowserListener : MediaControllerCompat.Callback() {
+
+        override fun onPlaybackStateChanged(playbackState: PlaybackStateCompat?) {
+            mIsPlaying = playbackState != null &&
+                    playbackState.state == PlaybackStateCompat.STATE_PLAYING
+            media_controls.isPressed = mIsPlaying
+        }
+
+        override fun onMetadataChanged(mediaMetadata: MediaMetadataCompat?) {
+            if (mediaMetadata == null) {
+                return
+            }
+           /* song_title.text = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+            song_artist.text = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
+            album_art.setImageBitmap(
+                PlayingRadioLibrary.getAlbumBitmap(
+                    this@MainActivity,
+                    mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
+                )
+            )*/
+        }
+
+        override fun onSessionDestroyed() {
+            super.onSessionDestroyed()
+        }
+
+        override fun onQueueChanged(queue: List<MediaSessionCompat.QueueItem>) {
+            super.onQueueChanged(queue)
+        }
+
+    }
 }

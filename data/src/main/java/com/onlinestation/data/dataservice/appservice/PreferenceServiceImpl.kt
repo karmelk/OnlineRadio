@@ -21,5 +21,8 @@ class PreferenceServiceImpl(private val context: Context) : PreferenceService {
                 .putString(authenticationKey, jsonAdapter.toJson(userData)).apply()
     }
 
+   /* var accessToken: String
+        get() = sharedPreferences.getString(KEY_ACCESS_TOKEN, "") ?: ""
+        set(accessToken) = sharedPreferences.edit().putString(KEY_ACCESS_TOKEN, accessToken).apply()*/
 
 }

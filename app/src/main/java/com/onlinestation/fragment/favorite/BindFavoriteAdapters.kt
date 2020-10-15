@@ -13,7 +13,9 @@ import com.onlinestation.fragment.favorite.viewmodel.FavoriteViewModel
 @BindingAdapter("logo", "placeholder")
 fun loadImage(view: AppCompatImageView, url: String?, placeHolder: Drawable) {
     Glide.with(view.context).load(url)
+        .centerCrop()
         .placeholder(placeHolder)
+        .circleCrop()
         .into(view)
 }
 

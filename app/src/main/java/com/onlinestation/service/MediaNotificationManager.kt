@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.media.session.MediaButtonReceiver
-import com.onlinestation.TestActivity
+import com.onlinestation.activity.TestActivity
 import com.onlinestation.domain.R
 
 class MediaNotificationManager(private val service: RadioService) {

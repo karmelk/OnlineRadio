@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kmworks.appbase.BaseViewModel
+import com.kmworks.appbase.Constants.Companion.defaultUserBalanceCount
+import com.kmworks.appbase.Constants.Companion.defaultUserID
 import com.onlinestation.domain.interactors.SettingsInteractor
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +26,7 @@ class SettingsViewModel(private val settingsInteractor: SettingsInteractor) :
         _balanceCountDataLD.value = settingsInteractor.getBalanceData()
     }
 
-    fun updateBalance(defaultId: Int,balanceCount: Int) {
+    fun updateBalance(defaultId: Int=defaultUserID,balanceCount: Int=defaultUserBalanceCount) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsInteractor.rewardBalanceDB(defaultId,balanceCount).collect {
                 withContext(Dispatchers.Main) {

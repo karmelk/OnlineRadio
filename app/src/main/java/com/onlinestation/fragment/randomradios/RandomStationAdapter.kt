@@ -15,8 +15,7 @@ class RandomStationAdapter(
     var itemList: MutableList<StationItemLocal>,
     var addFavorite: (item: StationItemLocal) -> Unit,
     var removeFavorite: (item: StationItemLocal) -> Unit
-) :
-    RecyclerView.Adapter<RandomStationAdapter.MyViewHolder>() {
+) : RecyclerView.Adapter<RandomStationAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -46,6 +45,7 @@ class RandomStationAdapter(
                             R.drawable.ic_default_station
                         )
                     )
+                    .circleCrop()
                     .into(stationLogo)
                 favorite.setOnClickListener {
                     if (!item.isFavorite) {

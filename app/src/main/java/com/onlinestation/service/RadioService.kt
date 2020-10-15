@@ -11,8 +11,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
-import com.onlinestation.domain.interactors.PlayStationInteractor
-
 import com.onlinestation.service.MediaNotificationManager.Companion.NOTIFICATION_ID
 import java.util.*
 
@@ -20,7 +18,6 @@ class RadioService : MediaBrowserServiceCompat() {
 
     private val TAG = RadioService::class.java.simpleName
     private lateinit var mSession: MediaSessionCompat
-    private lateinit var mediaPlayerListener: MediaPlayerListener
 
     private lateinit var mMediaNotificationManager: MediaNotificationManager
     private var mCallback: MediaSessionCallback? = null
@@ -43,7 +40,6 @@ class RadioService : MediaBrowserServiceCompat() {
         sessionToken = mSession.sessionToken
         mMediaNotificationManager =
             MediaNotificationManager(this)
-        mediaPlayerListener = MediaPlayerListener()
         mPlayback = MediaPlayerAdapter(
             this,
             MediaPlayerListener()
@@ -133,11 +129,6 @@ class RadioService : MediaBrowserServiceCompat() {
             Log.d(TAG, "onPlayFromMediaId: MediaSession active")
         }
 
-        override fun onPause() {
-            mPlayback.pause()
-            mPreparedMedia = null
-        }
-
         override fun onStop() {
             mPlayback.stop()
             mSession.isActive = false
@@ -154,10 +145,6 @@ class RadioService : MediaBrowserServiceCompat() {
             mQueueIndex = if (mQueueIndex > 0) mQueueIndex - 1 else mPlaylist.size - 1
             mPreparedMedia = null
             onPlay()
-        }
-
-        override fun onSeekTo(pos: Long) {
-            mPlayback.seekTo(pos)
         }
 
         private val isReadyToPlay: Boolean
@@ -178,14 +165,20 @@ class RadioService : MediaBrowserServiceCompat() {
             when (state.state) {
                 PlaybackStateCompat.STATE_PLAYING -> mServiceManager.moveServiceToStartedState(state)
                 PlaybackStateCompat.STATE_PAUSED -> mServiceManager.updateNotificationForPause(state)
-                PlaybackStateCompat.STATE_STOPPED -> mServiceManager.moveServiceOutOfStartedState(state)
+                PlaybackStateCompat.STATE_STOPPED -> mServiceManager.moveServiceOutOfStartedState(
+                    state
+                )
             }
         }
 
         internal inner class ServiceManager {
 
             fun moveServiceToStartedState(state: PlaybackStateCompat) {
-                val notification: Notification? = mMediaNotificationManager.getNotification( mPlayback.getCurrentMedia(), state, sessionToken)
+                val notification: Notification? = mMediaNotificationManager.getNotification(
+                    mPlayback.getCurrentMedia(),
+                    state,
+                    sessionToken
+                )
 
                 if (!mServiceInStartedState) {
                     ContextCompat.startForegroundService(
@@ -199,7 +192,11 @@ class RadioService : MediaBrowserServiceCompat() {
 
             fun updateNotificationForPause(state: PlaybackStateCompat) {
                 stopForeground(false)
-                val notification: Notification? = mMediaNotificationManager.getNotification(mPlayback.getCurrentMedia(), state, sessionToken)
+                val notification: Notification? = mMediaNotificationManager.getNotification(
+                    mPlayback.getCurrentMedia(),
+                    state,
+                    sessionToken
+                )
                 mMediaNotificationManager.getNotificationManager()
                     ?.notify(NOTIFICATION_ID, notification)
             }

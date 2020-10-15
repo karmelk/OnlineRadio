@@ -1,17 +1,12 @@
 package com.onlinestation.service
 
 import android.content.Context
-import android.content.res.AssetFileDescriptor
-import android.media.MediaPlayer
-import android.media.MediaPlayer.OnCompletionListener
 import android.net.Uri
 import android.os.SystemClock
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.UiThread
-import androidx.test.core.app.ActivityScenario.launch
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -21,50 +16,31 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException
+import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import com.google.android.exoplayer2.util.Util
-import com.onlinestation.utils.ParserM3UToURL
 import com.onlinestation.utils.parseM3UToString
-import kotlinx.coroutines.*
-import org.koin.core.KoinComponent
-import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.io.IOException
+
 
 class MediaPlayerAdapter(
     private val context: Context,
     private val mPlaybackInfoListener: PlaybackInfoListener
 ) : PlayerAdapter(context) {
 
-    private var mFilename: String = ""
-    //private var mMediaPlayer: MediaPlayer?=null
     private var mCurrentMedia: MediaMetadataCompat? = null
 
-    private var exoPlayer: SimpleExoPlayer ?=null
+    private var exoPlayer: SimpleExoPlayer? = null
     private var mState = 0
     private var mCurrentMediaPlayedToCompletion = false
-    private var mSeekWhileNotPlaying = -1
 
-    /*  private fun initializeMediaPlayer() {
-          if (mMediaPlayer == null) {
-              mMediaPlayer = MediaPlayer()
-              mMediaPlayer!!.setOnCompletionListener(OnCompletionListener {
-                  mPlaybackInfoListener.onPlaybackCompleted()
-
-                  // Set the state to "paused" because it most closely matches the state
-                  // in MediaPlayer with regards to available state transitions compared
-                  // to "stop".
-                  // Paused allows: seekTo(), start(), pause(), stop()
-                  // Stop allows: stop()
-                  setNewState(PlaybackStateCompat.STATE_PAUSED)
-              })
-          }
-      }
-  */
-    private fun initExoPlayer(){
-        exoPlayer= ExoPlayerFactory.newSimpleInstance(
-                context, DefaultRenderersFactory(context)
-                , DefaultTrackSelector(),
-                DefaultLoadControl()
-            )
-
+    private fun initExoPlayer() {
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(
+            context, DefaultRenderersFactory(context), DefaultTrackSelector(),
+            DefaultLoadControl()
+        )
     }
 
     override fun playFromMedia(metadata: MediaMetadataCompat?) {
@@ -75,7 +51,6 @@ class MediaPlayerAdapter(
         PlayingRadioLibrary.getMusicFilename(
             mediaId
         )?.let {
-            play()
             GlobalScope.launch { // CoroutineScope
                 loadRadio(it)
             }
@@ -86,81 +61,19 @@ class MediaPlayerAdapter(
         return mCurrentMedia
     }
 
-    /*
-        private fun playFile(filename: String) {
-            var mediaChanged = mFilename == null || filename != mFilename
-            if (mCurrentMediaPlayedToCompletion) {
-                // Last audio file was played to completion, the resourceId hasn't changed, but the
-                // player was released, so force a reload of the media file for playback.
-                mediaChanged = true
-                mCurrentMediaPlayedToCompletion = false
-            }
-            if (!mediaChanged) {
-                if (!isPlaying()) {
-                    play()
-                }
-                return
-            } else {
-                release()
-            }
-            mFilename = filename
-            initializeMediaPlayer()
-            try {
-                val assetFileDescriptor: AssetFileDescriptor = context.assets.openFd(mFilename)
-                mMediaPlayer!!.setDataSource(
-                    assetFileDescriptor.fileDescriptor,
-                    assetFileDescriptor.startOffset,
-                    assetFileDescriptor.length
-                )
-            } catch (e: Exception) {
-                throw RuntimeException("Failed to open file: $mFilename", e)
-            }
-            try {
-                mMediaPlayer!!.prepare()
-            } catch (e: Exception) {
-                throw RuntimeException("Failed to open file: $mFilename", e)
-            }
-            play()
-        }
-
-        private fun release() {
-            if (mMediaPlayer != null) {
-                mMediaPlayer?.release()
-                mMediaPlayer = null
-            }
-        }*/
     private fun release() {
         if (exoPlayer != null) {
             exoPlayer?.release()
             exoPlayer = null
         }
-    }
-    override fun isPlaying(): Boolean {
-        // return mMediaPlayer != null && mMediaPlayer!!.isPlaying
-        return exoPlayer?.isPlayingAd!!
-    }
-
-    override fun onPlay() {
-        /*   if (mMediaPlayer != null && !mMediaPlayer!!.isPlaying) {
-               mMediaPlayer!!.start()
-
-           }*/
         setNewState(PlaybackStateCompat.STATE_PLAYING)
     }
 
-/*    override fun onPause() {
-           *//*  if (mMediaPlayer != null && mMediaPlayer!!.isPlaying) {
-               mMediaPlayer!!.pause()
-
-           }*//*
-        release()
-        setNewState(PlaybackStateCompat.STATE_PAUSED)
-    }*/
+    override fun isPlaying(): Boolean {
+        return exoPlayer?.isPlayingAd!!
+    }
 
     override fun onStop() {
-
-        // Regardless of whether or not the MediaPlayer has been created / started, the state must
-        // be updated, so that MediaNotificationManager can take down the notification.
         release()
         setNewState(PlaybackStateCompat.STATE_STOPPED)
     }
@@ -173,28 +86,15 @@ class MediaPlayerAdapter(
     private fun setNewState(@PlaybackStateCompat.State newPlayerState: Int) {
         mState = newPlayerState
 
-        // Whether playback goes to completion, or whether it is stopped, the
-        // mCurrentMediaPlayedToCompletion is set to true.
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mCurrentMediaPlayedToCompletion = true
         }
 
-        // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
-        val reportPosition: Long
-        if (mSeekWhileNotPlaying >= 0) {
-            reportPosition = mSeekWhileNotPlaying.toLong()
-            if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                mSeekWhileNotPlaying = -1
-            }
-        } else {
-            reportPosition = 0
-            //  if (mMediaPlayer == null) 0 else mMediaPlayer!!.currentPosition.toLong()
-        }
         val stateBuilder = PlaybackStateCompat.Builder()
         stateBuilder.setActions(getAvailableActions())//3379
         stateBuilder.setState(
             mState, //3
-            reportPosition, //0
+            0, //0
             1.0f,
             SystemClock.elapsedRealtime() //777942020
         )
@@ -224,7 +124,7 @@ class MediaPlayerAdapter(
     }
 
 
-   private fun loadRadio(urlString: String) {
+    private fun loadRadio(urlString: String) {
         //val mp = "http://yp.shoutcast.com/sbin/tunein-station.m3u?id=99473570"
         val url: String? = parseM3UToString(urlString, "m3u")
         val mediaSource = extractMediaSourceFromUri(Uri.parse(url))
@@ -250,27 +150,62 @@ class MediaPlayerAdapter(
             .setExtractorsFactory(DefaultExtractorsFactory()).createMediaSource(uri)
     }
 
-   private val eventListener: Player.EventListener = object : Player.EventListener {
+    private val eventListener: Player.EventListener = object : Player.EventListener {
 
         override fun onPlayerStateChanged(
             playWhenReady: Boolean,
             playbackState: Int
         ) {
-            setNewState(PlaybackStateCompat.STATE_PLAYING)
             //  Toast.makeText(context, "$playbackState+ $playWhenReady", Toast.LENGTH_SHORT).show()
+            when (playbackState) {
+                Player.STATE_BUFFERING -> {
+                    Log.i("MessageExo", "onPlayerStateChanged: STATE_BUFFERING " + playbackState)
+                }
+                Player.STATE_IDLE -> {
+
+                }
+                Player.STATE_READY -> {
+
+                }
+                Player.STATE_ENDED -> {
+                    setNewState(PlaybackStateCompat.STATE_PLAYING)
+                }
+            }
         }
 
         override fun onPlayerError(error: ExoPlaybackException) {
-            Log.i("MessageExo", "" + error.message)
+
             Toast.makeText(context, "${error.message}", Toast.LENGTH_SHORT).show()
             // super.onPlayerError(error)
+
+            if (error.type == ExoPlaybackException.TYPE_SOURCE) {
+                val cause: IOException = error.sourceException
+                if (cause is HttpDataSourceException) {
+                    // An HTTP error occurred.
+                    val httpError = cause
+                    // This is the request for which the error occurred.
+                    val requestDataSpec = httpError.dataSpec
+
+                    // It's possible to find out more about the error both by casting and by
+                    // querying the cause.
+                    if (httpError is InvalidResponseCodeException) {
+                        // Cast to InvalidResponseCodeException and retrieve the response code,
+                        // message and headers.
+
+                        Log.i("MessageExo", "$httpError.responseMessage")
+                    } else {
+                        // Try calling httpError.getCause() to retrieve the underlying cause,
+                        // although note that it may be null.
+                    }
+                }
+            }
         }
 
         override fun onTracksChanged(
             trackGroups: TrackGroupArray,
             trackSelections: TrackSelectionArray
         ) {
-             //super.onTracksChanged(trackGroups, trackSelections)
+            //super.onTracksChanged(trackGroups, trackSelections)
         }
     }
 }

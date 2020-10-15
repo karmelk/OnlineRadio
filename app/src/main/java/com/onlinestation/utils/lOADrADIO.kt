@@ -2,7 +2,6 @@ package com.onlinestation.utils
 
 import android.content.Context
 import android.net.Uri
-import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
 import com.google.android.exoplayer2.*
@@ -15,10 +14,15 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+
 
 class lOADrADIO(val context: Context) {
 
     fun loadRadio() {
+
         val mp = "http://yp.shoutcast.com/sbin/tunein-station.m3u?id=99473570"
         val url: String? = parseM3UToString(mp, "m3u")
         val mediaSource =

@@ -6,7 +6,7 @@
     <data>
 
         <import type="com.onlinestation.entities.responcemodels.OwnerUserBalance" />
-        <import type="com.onlinestation.utils.Constants" />
+        <import type="com.kmworks.appbase.Constants" />
         <variable
             name="viewModel"
             type="com.onlinestation.fragment.settings.viewmodel.SettingsViewModel" />

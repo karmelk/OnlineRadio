@@ -36,4 +36,5 @@ dependencies {
     androidTestImplementation supportDependencies.espressoCore
     implementation supportDependencies.koinAndroid
     implementation project(path: ':entities')
+
 }
