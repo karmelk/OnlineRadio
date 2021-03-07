@@ -24,14 +24,23 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "OnlineRadio_${variant.name}_${variant.versionName}.apk"
+        }
+    }
     android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
     }
-    dataBinding {
-        enabled true
+    buildFeatures {
+        // for view binding:
+        viewBinding = true
     }
 }
 
@@ -50,6 +59,7 @@ dependencies {
     implementation supportDependencies.constraintlayout
     implementation supportDependencies.lifecycle
     implementation supportDependencies.lifecycleViewmodel
+
     implementation supportDependencies.koinAndroid
     implementation supportDependencies.koinViewModel
     implementation supportDependencies.coroutines
@@ -58,9 +68,8 @@ dependencies {
     implementation supportDependencies.navigationUi
     implementation supportDependencies.cardView
     implementation supportDependencies.glide
-    kapt supportDependencies.dataBinding
     implementation supportDependencies.legacySupport
     annotationProcessor supportDependencies.glideCompiler
     implementation supportDependencies.exoplayer
-
+    implementation 'saschpe.android:exoplayer2-ext-icy:1.0.1'
 }

@@ -3,7 +3,7 @@ package com.onlinestation.fragment.settings.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kmworks.appbase.BaseViewModel
+import com.kmworks.appbase.viewmodel.BaseViewModel
 import com.onlinestation.domain.interactors.SettingsInteractor
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
 import kotlinx.coroutines.Dispatchers

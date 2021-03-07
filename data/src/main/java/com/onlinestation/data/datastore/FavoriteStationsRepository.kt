@@ -1,8 +1,8 @@
 package com.onlinestation.data.datastore
 
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
 
 interface FavoriteStationsRepository {
-    suspend fun removeStationLocalDB(itemId: Int)
-    suspend fun getAllStationListLocalDB():MutableList<StationItemLocal>
+    suspend fun removeStationLocalDB(itemId: Long)
+    suspend fun getAllStationListLocalDB():MutableList<StationItemDb>
 }

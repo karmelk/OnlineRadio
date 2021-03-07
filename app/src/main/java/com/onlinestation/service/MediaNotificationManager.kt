@@ -18,8 +18,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.media.session.MediaButtonReceiver
-import com.onlinestation.TestActivity
-import com.onlinestation.domain.R
+import com.onlinestation.activity.MainActivity
+import com.onlinestation.R
 
 class MediaNotificationManager(private val service: RadioService) {
 
@@ -55,7 +55,7 @@ class MediaNotificationManager(private val service: RadioService) {
             service.getString(R.string.label_pause),
             MediaButtonReceiver.buildMediaButtonPendingIntent(
                 service,
-                PlaybackStateCompat.ACTION_PAUSE
+                PlaybackStateCompat.ACTION_STOP
             )
         )
         mNextAction = NotificationCompat.Action(
@@ -125,19 +125,12 @@ class MediaNotificationManager(private val service: RadioService) {
                         )
                     )
             )
-                .setColor(ContextCompat.getColor(service, R.color.notification_bg))
+                .setColor(ContextCompat.getColor(service, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_stat_image_audiotrack) // Pending intent that is fired when user clicks on notification.
                 .setContentIntent(createContentIntent()) // Title - Usually Song name.
                 .setContentTitle(description?.title) // Subtitle - Usually Artist name.
                 .setContentText(description?.subtitle)
-                .setLargeIcon(
-                    description?.mediaId?.let {
-                        PlayingRadioLibrary.getAlbumBitmap(
-                            service,
-                            it
-                        )
-                    }
-                )
+
                 // When notification is deleted (when playback is paused and notification can be
                 // deleted) fire MediaButtonPendingIntent with ACTION_STOP.
                 .setDeleteIntent(
@@ -198,7 +191,7 @@ class MediaNotificationManager(private val service: RadioService) {
     }
 
     private fun createContentIntent(): PendingIntent? {
-        val openUI = Intent(service, TestActivity::class.java)
+        val openUI = Intent(service, MainActivity::class.java)
         openUI.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         return PendingIntent.getActivity(
             service,

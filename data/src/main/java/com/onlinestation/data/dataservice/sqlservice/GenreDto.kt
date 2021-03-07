@@ -1,21 +1,19 @@
 package com.onlinestation.data.dataservice.sqlservice
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.gendermodels.PrimaryGenreItem
+import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
 
 @Dao
 interface GenreDto {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveGenre(data: MutableList<PrimaryGenreItem>)
+    fun saveGenre(data: List<GenderItemDb>)
 
-    @Query("DELETE FROM primaryGenre")
+    @Query("DELETE FROM genre")
     fun clearGenre()
 
-    @Query("SELECT * FROM primaryGenre")
-    fun getGenreList(): MutableList<PrimaryGenreItem>?
+    @Query("SELECT * FROM genre")
+    fun getGenreList(): MutableList<GenderItemDb>?
 }

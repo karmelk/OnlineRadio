@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.onlinestation.R
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
 import com.onlinestation.fragment.searchradios.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,7 +52,7 @@ class SearchFragment : Fragment() {
             },
             { item ->
                 searchStationAdapter.removeFavoriteItem(item)
-                searchViewModel.removeStationLocalDB(item.id)
+              //  searchViewModel.removeStationLocalDB(item.id)
             })
         searchStationRV.adapter = searchStationAdapter
         searchStationRV.scheduleLayoutAnimation()
@@ -61,13 +60,13 @@ class SearchFragment : Fragment() {
 
     private fun initViewModel() {
         searchViewModel.getSearchStationLD.observe(viewLifecycleOwner, Observer {
-            searchStationAdapter.updateList(it)
+           // searchStationAdapter.updateList(it)
         })
         searchViewModel.successAddStationLD.observe(viewLifecycleOwner, Observer {
-            searchStationAdapter.updateSuccessItem(it)
+           // searchStationAdapter.updateSuccessItem(it)
         })
         searchViewModel.errorAddStationLD.observe(viewLifecycleOwner, Observer {
-            searchStationAdapter.updateErrorItem(it)
+           // searchStationAdapter.updateErrorItem(it)
             Toast.makeText(
                 requireContext(),
                 "Can not save radio",
@@ -75,7 +74,7 @@ class SearchFragment : Fragment() {
             ).show()
         })
         searchViewModel.errorNotBalanceLD.observe(viewLifecycleOwner, Observer {
-            searchStationAdapter.updateErrorItem(it)
+           // searchStationAdapter.updateErrorItem(it)
             Toast.makeText(
                 requireContext(),
                 "Your balance is empty",

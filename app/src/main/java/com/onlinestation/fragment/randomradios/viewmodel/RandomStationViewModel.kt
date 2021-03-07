@@ -1,23 +1,22 @@
 package com.onlinestation.fragment.randomradios.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kmworks.appbase.BaseViewModel
-import com.kmworks.appbase.Constants
+import com.kmworks.appbase.utils.Constants
+import com.kmworks.appbase.viewmodel.BaseViewModel
 import com.onlinestation.domain.interactors.RandomStationInteractor
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 class RandomStationViewModel(private val randomStationInteractor: RandomStationInteractor) :
     BaseViewModel() {
-    private val _successAddStationLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _errorAddStationLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _errorNotBalanceLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _getRandomStationLD by lazy { MutableLiveData<MutableList<StationItemLocal>>() }
+    private val _successAddStationLD by lazy { MutableLiveData<StationItem>() }
+    private val _errorAddStationLD by lazy { MutableLiveData<StationItem>() }
+    private val _errorNotBalanceLD by lazy { MutableLiveData<StationItem>() }
+    private val _getRandomStationLD by lazy { MutableLiveData<MutableList<StationItem>>() }
     val successAddStationLD get() = _successAddStationLD
     val errorAddStationLD get() = _errorAddStationLD
     val errorNotBalanceLD get() = _errorNotBalanceLD
@@ -26,15 +25,16 @@ class RandomStationViewModel(private val randomStationInteractor: RandomStationI
         viewModelScope.launch(Dispatchers.IO) {
             when (val userData = randomStationInteractor.getRandomStationListData()) {
                 is Result.Success -> withContext(Dispatchers.Main) {
-                    _getRandomStationLD.value = userData.data
+                   // _getRandomStationLD.value = userData.data
+
                 }
             }
         }
     }
 
-    fun addStationLocalDB(item: StationItemLocal) {
+    fun addStationLocalDB(item: StationItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            randomStationInteractor.addStationDataLocalDB(item).collect { data ->
+           /* randomStationInteractor.addStationDataLocalDB(item).collect { data ->
                 when (data) {
                     is Result.Success -> withContext(Dispatchers.Main) {
                         _successAddStationLD.value = data.data
@@ -51,12 +51,12 @@ class RandomStationViewModel(private val randomStationInteractor: RandomStationI
                     }
                 }
             }
-        }
+        */}
     }
 
     fun removeStationLocalDB(itemId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            randomStationInteractor.removeStationDataLocalDB(itemId)
+         //   randomStationInteractor.removeStationDataLocalDB(itemId)
         }
     }
 

@@ -59,41 +59,44 @@ open class MediaBrowserHelper(
         )
     }
 
-    protected open fun onConnected(mediaController: MediaControllerCompat) {}
+    protected open fun onConnected(mediaController: MediaControllerCompat) {
+
+    }
 
     protected open fun onChildrenLoaded(
         parentId: String,
         children: List<MediaBrowserCompat.MediaItem?>
     ) {
+
     }
 
-    protected fun onDisconnected() {}
+    protected open fun onDisconnected() {}
+
     protected fun getMediaController(): MediaControllerCompat {
         checkNotNull(mMediaController) { "MediaController is null!" }
         return mMediaController as MediaControllerCompat
     }
 
-
-    private fun resetState() {
+    fun resetState() {
         performOnAllCallbacks(object :
             CallbackCommand {
             override fun perform(callback: MediaControllerCompat.Callback?) {
                 mMediaController?.let {
                     val playbackState = it.playbackState
                     callback?.onPlaybackStateChanged(playbackState)
-                }
 
+                }
             }
         })
         Log.d(TAG, "resetState: ")
     }
 
     fun getTransportControls(): MediaControllerCompat.TransportControls? {
-        if (mMediaController == null) {
+    /*    if (mMediaController == null) {
             Log.d(TAG, "getTransportControls: MediaController is null!")
             throw IllegalStateException("MediaController is null!")
-        }
-        return mMediaController!!.transportControls
+        }*/
+        return mMediaController?.transportControls
     }
 
     open fun registerCallback(callback: MediaControllerCompat.Callback?) {
@@ -115,9 +118,7 @@ open class MediaBrowserHelper(
 
     private fun performOnAllCallbacks(command: CallbackCommand) {
         for (callback in mCallbackList) {
-            if (callback != null) {
-                command.perform(callback)
-            }
+            command.perform(callback)
         }
     }
 

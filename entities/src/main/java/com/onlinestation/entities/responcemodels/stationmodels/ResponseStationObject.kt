@@ -6,4 +6,5 @@ data class ResponseStationObject<R>(
     @Json(name = "stationlist")
     val stationlist: ResponseStationList<R>?
 
+
 )

@@ -3,6 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">api.shoutcast.com</domain>
         <domain includeSubdomains="true">yp.shoutcast.com</domain>
+        <domain includeSubdomains="true">kmworks.app</domain>
         <domain includeSubdomains="true">i.radionomy.com</domain>
     </domain-config>
 </network-security-config>

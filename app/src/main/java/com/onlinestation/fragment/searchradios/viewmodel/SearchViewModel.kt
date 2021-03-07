@@ -2,24 +2,24 @@ package com.onlinestation.fragment.searchradios.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kmworks.appbase.BaseViewModel
-import com.kmworks.appbase.Constants
+import com.kmworks.appbase.utils.Constants
+import com.kmworks.appbase.viewmodel.BaseViewModel
 import com.onlinestation.domain.interactors.SearchStationInteractor
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import com.onlinestation.entities.Result
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchViewModel(private val searchStationInteractor: SearchStationInteractor) :
     BaseViewModel() {
 
-    private val _successAddStationLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _errorAddStationLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _errorNotBalanceLD by lazy { MutableLiveData<StationItemLocal>() }
-    private val _getSearchStationLD by lazy { MutableLiveData<MutableList<StationItemLocal>>() }
+    private val _successAddStationLD by lazy { MutableLiveData<StationItem>() }
+    private val _errorAddStationLD by lazy { MutableLiveData<StationItem>() }
+    private val _errorNotBalanceLD by lazy { MutableLiveData<StationItem>() }
+    private val _getSearchStationLD by lazy { MutableLiveData<MutableList<StationItem>>() }
     val successAddStationLD get() = _successAddStationLD
     val errorAddStationLD get() = _errorAddStationLD
     val errorNotBalanceLD get() = _errorNotBalanceLD
@@ -29,7 +29,7 @@ class SearchViewModel(private val searchStationInteractor: SearchStationInteract
         viewModelScope.launch(Dispatchers.IO) {
             when (val userData = searchStationInteractor.searchStationListData(searchKeyword, genre)) {
                 is Result.Success -> withContext(Dispatchers.Main) {
-                    _getSearchStationLD.value = userData.data
+                   // _getSearchStationLD.value = userData.data
                 }
                 is Result.Error -> {
 
@@ -38,9 +38,9 @@ class SearchViewModel(private val searchStationInteractor: SearchStationInteract
         }
     }
 
-    fun addStationLocalDB(item: StationItemLocal) {
+    fun addStationLocalDB(item: StationItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            searchStationInteractor.addStationDataLocalDB(item).collect { data ->
+           /* searchStationInteractor.addStationDataLocalDB(item).collect { data ->
                 when (data) {
                     is Result.Success -> withContext(Dispatchers.Main) {
                         _successAddStationLD.value = data.data
@@ -56,7 +56,7 @@ class SearchViewModel(private val searchStationInteractor: SearchStationInteract
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 

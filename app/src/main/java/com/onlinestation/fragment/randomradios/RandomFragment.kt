@@ -10,18 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.onlinestation.R
+import com.onlinestation.activity.MainActivity
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
 
 import com.onlinestation.fragment.randomradios.viewmodel.RandomStationViewModel
+import com.onlinestation.service.PlayingRadioLibrary
 import kotlinx.android.synthetic.main.fragment_random.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class RandomFragment : Fragment() {
     private lateinit var randomStationAdapter: RandomStationAdapter
     private val randomViewModel: RandomStationViewModel by viewModel()
-
+    private val playingRadioLibrary: PlayingRadioLibrary by inject()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,7 +47,10 @@ class RandomFragment : Fragment() {
             },
             { item ->
                 randomStationAdapter.removeFavoriteItem(item)
-                randomViewModel.removeStationLocalDB(item.id)
+               // randomViewModel.removeStationLocalDB(item.id)
+            },
+            { stationId ->
+                randomViewModel.loadData(stationId.toLong())
             })
         randomStationRV.adapter = randomStationAdapter
         randomStationRV.scheduleLayoutAnimation()
@@ -53,13 +58,13 @@ class RandomFragment : Fragment() {
 
     private fun initViewModel() {
         randomViewModel.getRandomStationLD.observe(viewLifecycleOwner, Observer {
-            randomStationAdapter.updateList(it)
+           // randomStationAdapter.updateList(it)
         })
         randomViewModel.successAddStationLD.observe(viewLifecycleOwner, Observer {
-            randomStationAdapter.updateSuccessItem(it)
+           // randomStationAdapter.updateSuccessItem(it)
         })
         randomViewModel.errorAddStationLD.observe(viewLifecycleOwner, Observer {
-            randomStationAdapter.updateErrorItem(it)
+          //  randomStationAdapter.updateErrorItem(it)
             Toast.makeText(
                 requireContext(),
                 "Can not save radio",
@@ -67,14 +72,18 @@ class RandomFragment : Fragment() {
             ).show()
         })
         randomViewModel.errorNotBalanceLD.observe(viewLifecycleOwner, Observer {
-            randomStationAdapter.updateErrorItem(it)
+          //  randomStationAdapter.updateErrorItem(it)
             Toast.makeText(
                 requireContext(),
                 "Your balance is empty",
                 Toast.LENGTH_SHORT
             ).show()
         })
-
+       /* randomViewModel.loadStation.observe(viewLifecycleOwner, Observer {
+            playingRadioLibrary.updateLibraryStation(randomViewModel.getRandomStationLD.value!!,this@RandomFragment::class.java.simpleName)
+            (context as MainActivity).mMediaBrowserHelper?.getTransportControls()
+                ?.playFromMediaId(it, null)
+        })*/
     }
 
 }

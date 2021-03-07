@@ -6,15 +6,16 @@ import com.onlinestation.data.util.analyzeResponseStation
 import com.onlinestation.data.util.makeApiCall
 import com.onlinestation.entities.localmodels.QuerySearchWithGenreBody
 import com.onlinestation.entities.responcemodels.stationmodels.ResponseObjectStation
-import com.onlinestation.entities.responcemodels.stationmodels.StationItem
 import retrofit2.Response
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.localmodels.QuerySearchWithoutGenreBody
+import com.onlinestation.entities.responcemodels.stationmodels.ResponseStationList
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
 
 class SearchRepositoryImpl(private val allApiService: AllApiService) :
     SearchStationRepository {
 
-    override suspend fun searchStationListData(queryBody: QuerySearchWithGenreBody): Result<MutableList<StationItem>> =
+    override suspend fun searchStationListData(queryBody: QuerySearchWithGenreBody): Result<ResponseStationList<StationItemResponse>> =
         makeApiCall({
             getSearchStationData(
                 allApiService.getSearchStationList(
@@ -27,7 +28,7 @@ class SearchRepositoryImpl(private val allApiService: AllApiService) :
             )
         })
 
-    override suspend fun searchStationListWithoutGenreData(queryBody: QuerySearchWithoutGenreBody): Result<MutableList<StationItem>> =
+    override suspend fun searchStationListWithoutGenreData(queryBody: QuerySearchWithoutGenreBody): Result<ResponseStationList<StationItemResponse>> =
         makeApiCall({
             getSearchStationData(
                 allApiService.getSearchStationWithoutStationList(
@@ -39,7 +40,7 @@ class SearchRepositoryImpl(private val allApiService: AllApiService) :
             )
         })
 
-    private fun getSearchStationData(response: Response<ResponseObjectStation<StationItem>>): Result<MutableList<StationItem>> =
+    private fun getSearchStationData(response: Response<ResponseObjectStation<StationItemResponse>>): Result<ResponseStationList<StationItemResponse>> =
         analyzeResponseStation(response)
 
 }

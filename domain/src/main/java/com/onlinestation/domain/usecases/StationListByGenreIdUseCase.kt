@@ -1,73 +1,108 @@
 package com.onlinestation.domain.usecases
 
+import com.kmworks.appbase.utils.Constants
+import com.kmworks.appbase.utils.Constants.Companion.API_KEY
+import com.kmworks.appbase.utils.Constants.Companion.RADIOS_LIMIT
+import com.kmworks.appbase.utils.Constants.Companion.RADIOS_OFFSET
 import com.onlinestation.data.datastore.LocalSQLRepository
 import com.onlinestation.data.datastore.StationListByGenreIdRepository
-import com.kmworks.appbase.Constants
-import com.kmworks.appbase.Constants.Companion.API_KEY
-import com.kmworks.appbase.Constants.Companion.DATA_FORMAT
-import com.kmworks.appbase.Constants.Companion.LIMIT
 import com.onlinestation.domain.interactors.StationListByGenreIdInteractor
+import com.onlinestation.domain.utils.fromDBStationToStation
+import com.onlinestation.domain.utils.fromStationToStationDB
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.localmodels.QueryStationByGenderBody
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
-import com.onlinestation.domain.utils.toLocalStation
 import com.onlinestation.entities.RadioException
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
-import java.util.*
+import kotlinx.coroutines.launch
 
 class StationListByGenreIdUseCase(
     private val stationListByGenreIdRepository: StationListByGenreIdRepository,
     private val localSQLRepository: LocalSQLRepository
 ) : StationListByGenreIdInteractor {
+
+
+    val stationItems: MutableList<StationItem> = mutableListOf()
+
     @Suppress("EXPERIMENTAL_API_USAGE")
-    override suspend fun getStationListByGenreIdData(parentId: Int): Result<MutableList<StationItemLocal>> {
+    override suspend fun getStationListByGenreIdData(id: Long): Result<MutableList<StationItem>> {
+
         val apiList = stationListByGenreIdRepository.getStationListData(
-            QueryStationByGenderBody(parentId, LIMIT, DATA_FORMAT, API_KEY)
+            QueryStationByGenderBody(
+                Constants.METHOD_GET_RADIOS, API_KEY, RADIOS_OFFSET,
+                RADIOS_LIMIT, id
+            )
         )
         return when (apiList) {
             is Result.Success -> {
-                val stationItemLocal: MutableList<StationItemLocal> = mutableListOf()
-                apiList.data?.let {
-                    for (item in it) {
+
+                apiList.data?.let { stationList ->
+                    for (item in stationList) {
                         val dbItem = localSQLRepository.getItemStationDB(item.id)
                         dbItem?.apply {
-                            stationItemLocal.add(item.toLocalStation(createDateTime, isFavorite))
-                        } ?: stationItemLocal.add(item.toLocalStation(0, false))
+                            stationItems.add(
+                                this.fromDBStationToStation(
+                                    true
+                                )
+                            )
+                        } ?: run {
+                            stationItems.add(item.fromDBStationToStation(false))
+                        }
                     }
                 }
-                Result.Success(stationItemLocal)
+                Result.Success(stationItems)
             }
             else -> {
-                Result.Error(RadioException(com.kmworks.appbase.Constants.errorDefaultCode))
+                Result.Error(RadioException(Constants.errorDefaultCode))
             }
         }
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    override suspend fun addStationDataLocalDB(
-        item: StationItemLocal
-    ) = channelFlow<Result<StationItemLocal>> {
+    override fun addRemoveStationDataLocalDB(
+        item: StationItem
+    ): Result<MutableList<StationItem>> {
         val balanceCount: OwnerUserBalance? = getBalanceData()
-        balanceCount?.apply {
-            if (balance > 0) {
-                balance--
-                item.isFavorite = true
-                item.createDateTime = Calendar.getInstance().time.time
-                localSQLRepository.addStationDB(item)
-                localSQLRepository.updateBalanceDB(this@apply).collect { value ->
-                    channel.offer(Result.Success(item))
-                }
-            } else {
-                channel.offer(Result.Error(RadioException(Constants.errorNotBalanceCode, item)))
+        if (item.isFavorite) {
+            CoroutineScope(Dispatchers.IO).launch {
+                localSQLRepository.removeStationDB(itemId = item.id)
             }
-        } ?: channel.offer(Result.Error(RadioException(Constants.errorAddStationCode, item)))
-        awaitClose {}
+            stationItems.find { it.id == item.id }?.isFavorite = false
+            return Result.Success(stationItems)
+        } else {
+            balanceCount?.run {
+                if (balance > 0) {
+                    balance--
+                    item.isFavorite = true
+                    val itemLocalDb = item.fromStationToStationDB()
+                    stationItems.find { it.id == item.id }?.isFavorite = true
+                    CoroutineScope(Dispatchers.IO).launch {
+                        localSQLRepository.addStationDB(itemLocalDb)
+                        localSQLRepository.updateBalanceDB(this@run).collect { value ->
+
+                        }
+                    }
+                    return Result.Success(stationItems)
+                } else {
+                    return Result.Error(RadioException(Constants.errorNotBalanceCode))
+                }
+
+            } ?: kotlin.run {
+                return Result.Error(
+                    RadioException(
+                        Constants.errorNotBalanceCode
+                    )
+                )
+            }
+        }
     }
 
-    override suspend fun removeStationDataLocalDB(itemId: Int) {
+    override suspend fun removeStationDataLocalDB(itemId: Long) {
         localSQLRepository.removeStationDB(itemId)
     }
 

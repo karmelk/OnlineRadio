@@ -7,16 +7,15 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.onlinestation.R
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
 import kotlinx.android.synthetic.main.item_station.view.*
 import java.util.*
 
 class SearchStationAdapter(
-    var itemList: MutableList<StationItemLocal>,
-    var addFavorite: (item: StationItemLocal) -> Unit,
-    var removeFavorite: (item: StationItemLocal) -> Unit
-) :
-    RecyclerView.Adapter<SearchStationAdapter.MyViewHolder>() {
+    var itemList: MutableList<StationItem>,
+    var addFavorite: (item: StationItem) -> Unit,
+    var removeFavorite: (item: StationItem) -> Unit
+) : RecyclerView.Adapter<SearchStationAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -37,19 +36,20 @@ class SearchStationAdapter(
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindItem(item: StationItemLocal) {
+        fun bindItem(item: StationItem) {
             with(itemView) {
                 stationName.text = item.name
-                stationsCount.text = "Stations " + item.genre
+                /*stationsCount.text = "Stations " + item.genre
                 Glide.with(context)
                     .load(item.logo)
+                    .circleCrop()
                     .placeholder(
                         ContextCompat.getDrawable(
                             context,
                             R.drawable.ic_default_station
                         )
                     )
-                    .into(stationLogo)
+                    .into(stationLogo)*/
                 favorite.setOnClickListener {
                     if (!item.isFavorite) {
                         addFavorite(item)
@@ -76,25 +76,25 @@ class SearchStationAdapter(
         }
     }
 
-    fun updateList(updateList: MutableList<StationItemLocal>?) {
+    fun updateList(updateList: MutableList<StationItem>?) {
         updateList?.let {
             itemList = it
             notifyDataSetChanged()
         }
     }
 
-    fun updateErrorItem(data: StationItemLocal) {
+    fun updateErrorItem(data: StationItem) {
         itemList.find { it.id == data.id }?.isFavorite = data.isFavorite
         notifyDataSetChanged()
     }
-    fun removeFavoriteItem(data: StationItemLocal) {
+    fun removeFavoriteItem(data: StationItem) {
         itemList.find { it.id == data.id }?.apply {
-            isFavorite = false
-            createDateTime = 0
+           // isFavorite = false
+           // createDateTime = 0
         }
         notifyDataSetChanged()
     }
-    fun updateSuccessItem(data: StationItemLocal) {
+    fun updateSuccessItem(data: StationItem) {
         itemList.find { it.id == data.id }?.isFavorite = data.isFavorite
         notifyDataSetChanged()
     }

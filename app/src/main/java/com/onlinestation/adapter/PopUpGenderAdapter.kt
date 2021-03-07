@@ -24,8 +24,8 @@ class PopUpGenderAdapter(
         val item = genderList[position]
         val message = rowView.findViewById(R.id.message) as AppCompatTextView
         item.apply {
-            message.text = genderName
-            message.background = if (selectedItem) {
+            message.text = name
+           /* message.background = if (selectedItem) {
                 ContextCompat.getDrawable(
                     context,
                     R.drawable.border_message_item_selected
@@ -35,14 +35,14 @@ class PopUpGenderAdapter(
                     context,
                     R.drawable.border_message_item
                 )
-            }
+            }*/
         }
         message.setOnClickListener {
-            if (item.genderName == "All") {
+        /*    if (item.genderName == "All") {
                 genderNameCB.invoke(null)
             } else {
                 genderNameCB.invoke(item.genderName)
-            }
+            }*/
 
         }
         return rowView

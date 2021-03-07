@@ -13,4 +13,5 @@ class SettingsUseCase(
 
     override fun getBalanceData(): OwnerUserBalance? =
         localSQLRepository.getBalanceDB()
+
 }

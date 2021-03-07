@@ -1,10 +1,10 @@
 package com.onlinestation.data.dataservice.apiservice
 
 import com.onlinestation.entities.responcemodels.gendermodels.ResponseObjectGenre
-import com.onlinestation.entities.responcemodels.gendermodels.PrimaryGenreItem
+import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
 import com.onlinestation.entities.responcemodels.gendermodels.SecondaryGenreItem
-import com.onlinestation.entities.responcemodels.stationmodels.StationItem
 import com.onlinestation.entities.responcemodels.stationmodels.ResponseObjectStation
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,7 +16,8 @@ interface AllApiService {
     suspend fun getPrimaryGenreList(
         @Query("k") key: String,
         @Query("f") format: String
-    ): Response<ResponseObjectGenre<PrimaryGenreItem>>
+    ): Response<ResponseObjectGenre<GenderItemDb>>
+
 
     @GET("/genre/secondary")
     suspend fun getSecondaryGenreList(
@@ -31,7 +32,7 @@ interface AllApiService {
         @Query("mt") stationFormat: String,
         @Query("limit") limit: Int,
         @Query("f") format: String
-    ): Response<ResponseObjectStation<StationItem>>
+    ): Response<ResponseObjectStation<StationItemResponse>>
 
     @GET("/station/advancedsearch")
     suspend fun getStationListByGenreId(
@@ -39,7 +40,7 @@ interface AllApiService {
         @Query("limit") limit: Int,
         @Query("f") format: String,
         @Query("k") key: String
-    ): Response<ResponseObjectStation<StationItem>>
+    ): Response<ResponseObjectStation<StationItemResponse>>
 
     @GET("/station/nowplaying")
     suspend fun getSearchStationList(
@@ -48,12 +49,12 @@ interface AllApiService {
         @Query("limit") limit: Int,
         @Query("genre") genre: String,
         @Query("k") key: String
-    ): Response<ResponseObjectStation<StationItem>>
+    ): Response<ResponseObjectStation<StationItemResponse>>
     @GET("/station/nowplaying")
     suspend fun getSearchStationWithoutStationList(
         @Query("ct") ct: String,
         @Query("f") format: String,
         @Query("limit") limit: Int,
         @Query("k") key: String
-    ): Response<ResponseObjectStation<StationItem>>
+    ): Response<ResponseObjectStation<StationItemResponse>>
 }

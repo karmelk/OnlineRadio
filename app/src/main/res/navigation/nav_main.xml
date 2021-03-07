@@ -7,15 +7,10 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.onlinestation.fragment.primarygenre.PrimaryGenreFragment"
+        android:name="com.onlinestation.fragment.genre.GenreFragment"
         android:label="PrimaryGenderFragment"
-        tools:layout="@layout/fragment_primary_genre">
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_secondary_genre"
-            app:destination="@id/navigation_secondary_genre" />
-        <argument
-            android:name="secondaryGenreID"
-            app:argType="integer" />
+        tools:layout="@layout/fragment_genre">
+
     </fragment>
 
     <fragment
@@ -37,23 +32,11 @@
         tools:layout="@layout/fragment_settings" />
 
     <fragment
-        android:id="@+id/navigation_secondary_genre"
-        android:name="com.onlinestation.fragment.secondarygenre.SecondaryGenreFragment"
-        android:label="SecondaryGenreFragment"
-        tools:layout="@layout/fragment_secondary_genre">
-        <action
-            android:id="@+id/action_navigation_secondary_genre_to_navigation_stations_by_genre_id"
-            app:destination="@id/navigation_stations_by_genre_id" />
-    </fragment>
-
-    <fragment
         android:id="@+id/navigation_stations_by_genre_id"
-        android:name="com.onlinestation.fragment.stationsbygenreid.StationListByGenreIdFragment"
+        android:name="com.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment"
         android:label="StationListByGenreIdFragment"
         tools:layout="@layout/fragment_station_list_by_genre_id">
-        <argument
-            android:name="genreId"
-            app:argType="integer" />
+
     </fragment>
 
     <fragment

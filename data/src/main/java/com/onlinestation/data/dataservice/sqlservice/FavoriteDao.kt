@@ -1,24 +1,22 @@
 package com.onlinestation.data.dataservice.sqlservice
 
 import androidx.room.*
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
-import kotlinx.coroutines.flow.Flow
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
 
 @Dao
 interface FavoriteDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-     fun insertStation(item: StationItemLocal)
+     fun insertStation(item: StationItemDb)
 
-    @Query("DELETE  FROM radioStation where id=:itemId")
-     fun deleteStationById(itemId: Int)
+    @Query("DELETE  FROM stations where id=:itemId")
+     fun deleteStationById(itemId: Long)
 
-    @Query("SELECT * FROM radioStation order by createDateTime DESC ")
-     fun getAllStationList(): MutableList<StationItemLocal>
+    @Query("SELECT * FROM stations")
+     fun getAllStationList(): MutableList<StationItemDb>
 
-    @Query("SELECT * FROM radioStation where id=:itemId")
-     fun getItemStation(itemId: Int): StationItemLocal?
+    @Query("SELECT * FROM stations where id=:itemId")
+     fun getItemStation(itemId: Long): StationItemDb?
 
 
 }

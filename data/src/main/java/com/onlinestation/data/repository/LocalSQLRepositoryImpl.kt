@@ -5,8 +5,8 @@ import com.onlinestation.data.dataservice.sqlservice.FavoriteDao
 import com.onlinestation.data.dataservice.sqlservice.GenreDto
 import com.onlinestation.data.datastore.LocalSQLRepository
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.gendermodels.PrimaryGenreItem
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
@@ -19,22 +19,22 @@ class LocalSQLRepositoryImpl(
 ) : LocalSQLRepository {
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    override suspend fun addStationDB(item: StationItemLocal) = stationDao.insertStation(item)
-    override suspend fun addGenreListDB(item: MutableList<PrimaryGenreItem>) {
-        genreDto.saveGenre(item)
+    override suspend fun addStationDB(item: StationItemDb) = stationDao.insertStation(item)
+    override suspend fun addGenreListDB(itemDb: List<GenderItemDb>) {
+        genreDto.saveGenre(itemDb)
     }
 
-    override fun getGenreListDB(): MutableList<PrimaryGenreItem>? =genreDto.getGenreList()
+    override fun getGenreListDB(): MutableList<GenderItemDb>? =genreDto.getGenreList()
 
-    override suspend fun removeStationDB(itemId: Int) {
+    override suspend fun removeStationDB(itemId: Long) {
         stationDao.deleteStationById(itemId)
     }
 
-    override suspend fun getAllStationListDB(): MutableList<StationItemLocal> =
+    override suspend fun getAllStationListDB(): MutableList<StationItemDb> =
         stationDao.getAllStationList()
 
-    override suspend fun getItemStationDB(itemId: Int): StationItemLocal? =
-        stationDao.getItemStation(itemId)
+    override suspend fun getItemStationDB(id: Long): StationItemDb? =
+        stationDao.getItemStation(id)
 
     override fun getBalanceDB(): OwnerUserBalance? = balanceDto.getBalance()
 

@@ -8,15 +8,16 @@ import com.onlinestation.entities.Result
 import com.onlinestation.entities.localmodels.QueryRandomStationBody
 
 
-import com.onlinestation.entities.responcemodels.stationmodels.StationItem
 import com.onlinestation.entities.responcemodels.stationmodels.ResponseObjectStation
+import com.onlinestation.entities.responcemodels.stationmodels.ResponseStationList
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
 import retrofit2.Response
 
 class RandomStationRepositoryImpl(private val allApiService: AllApiService) :
     RandomStationRepository {
     override suspend fun getRandomStationData(
         queryBody: QueryRandomStationBody
-    ): Result<MutableList<StationItem>> =
+    ): Result<ResponseStationList<StationItemResponse>> =
 
         makeApiCall({
             getRandomStationData(
@@ -29,7 +30,7 @@ class RandomStationRepositoryImpl(private val allApiService: AllApiService) :
             )
         })
 
-    private fun getRandomStationData(response: Response<ResponseObjectStation<StationItem>>): Result<MutableList<StationItem>> =
+    private fun getRandomStationData(response: Response<ResponseObjectStation<StationItemResponse>>): Result<ResponseStationList<StationItemResponse>> =
         analyzeResponseStation(response)
 
 }

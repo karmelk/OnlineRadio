@@ -4,10 +4,9 @@ import com.onlinestation.data.datastore.LocalSQLRepository
 import com.onlinestation.entities.RadioException
 import java.lang.Exception
 import com.onlinestation.entities.Result
+import com.onlinestation.entities.responcemodels.ParentResponse
 import com.onlinestation.entities.responcemodels.gendermodels.ResponseObjectGenre
-import com.onlinestation.entities.responcemodels.stationmodels.ResponseObjectStation
-import com.onlinestation.entities.responcemodels.stationmodels.StationItem
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.stationmodels.*
 import retrofit2.Response
 
 suspend fun <R> makeApiCall(
@@ -36,14 +35,35 @@ fun <R> analyzeResponseGenre(
     }
 }
 
-
-fun <R> analyzeResponseStation(
-    response: Response<ResponseObjectStation<R>>
-): Result<MutableList<R>> {
+fun <Model> analyzeResponse(
+    response: Response<ParentResponse<Model>>
+): Result<List<Model>> {
     when (response.code()) {
         200 -> {
             val responseBody = response.body()
-            return responseBody?.response?.data?.stationlist?.station?.let {
+            return responseBody?.let {
+                if (it.status == 200) {
+                    Result.Success(it.datas)
+                } else {
+                    Result.Error(RadioException<Nothing>(response.code()))
+                }
+            } ?: Result.Error(RadioException<Nothing>(response.code()))
+        }
+
+        else -> {
+            return Result.Error(RadioException<Nothing>(response.code()))
+        }
+    }
+}
+
+
+fun <R> analyzeResponseStation(
+    response: Response<ResponseObjectStation<R>>
+): Result<ResponseStationList<R>> {
+    when (response.code()) {
+        200 -> {
+            val responseBody = response.body()
+            return responseBody?.response?.data?.stationlist?.let {
                 return Result.Success(it)
             } ?: Result.Error(RadioException<Nothing>(response.code()))
         }

@@ -1,8 +1,8 @@
 package com.onlinestation.domain.interactors
 
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
 
 interface FavoriteStationsInteractor {
-    suspend fun removeStationDataLocalDB(itemId: Int)
-    suspend fun getAllStationDataLocalDB():MutableList<StationItemLocal>
+     fun removeStationDataLocalDB(itemId: Long):MutableList<StationItem>
+    suspend fun getAllStationDataLocalDB():MutableList<StationItem>
 }

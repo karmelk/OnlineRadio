@@ -3,11 +3,11 @@ package com.onlinestation.data.dataservice.sqlservice
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.gendermodels.PrimaryGenreItem
-import com.onlinestation.entities.responcemodels.stationmodels.StationItemLocal
+import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
+import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
 
 @Database(
-    entities = [StationItemLocal::class, OwnerUserBalance::class, PrimaryGenreItem::class],
+    entities = [OwnerUserBalance::class, GenderItemDb::class,StationItemDb::class],
     version = 1,
     exportSchema = false
 )
