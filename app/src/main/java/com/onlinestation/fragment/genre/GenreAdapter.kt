@@ -10,11 +10,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.kmworks.appbase.adapter.BaseAdapter
 import com.kmworks.appbase.adapter.BaseViewHolder
 import com.onlinestation.R
-import com.onlinestation.adapter.imageSource
 import com.onlinestation.databinding.ItemGenreBinding
 import com.onlinestation.entities.localmodels.GenderItem
 
-class GenreAdapter(val goToStationPage:(chatId:Long)->Unit) :
+class GenreAdapter(val goToStationPage:(id:Long)->Unit) :
     BaseAdapter<ViewBinding, GenderItem, BaseViewHolder<GenderItem, ViewBinding>>(DiffCallback()) {
 
     override fun onCreateViewHolder(
@@ -28,16 +27,16 @@ class GenreAdapter(val goToStationPage:(chatId:Long)->Unit) :
         )
     )
 
-    inner class MyViewHolder(private val binding: ItemGenreBinding) :
+    private inner class MyViewHolder(private val binding: ItemGenreBinding) :
         BaseViewHolder<GenderItem, ViewBinding>(binding) {
 
         override fun bind(item: GenderItem) {
-
             with(binding) {
                 genreName.text = item.name
-                Glide.with(binding.genderLogo.context)
+                Glide.with(binding.root.context)
                     .load(item.img)
                     .centerCrop()
+                    .circleCrop()
                     .apply(
                         RequestOptions()
                             .placeholder(R.drawable.ic_default_radio)
@@ -52,7 +51,7 @@ class GenreAdapter(val goToStationPage:(chatId:Long)->Unit) :
         }
     }
 
-    internal class DiffCallback : DiffUtil.ItemCallback<GenderItem>() {
+    private  class DiffCallback : DiffUtil.ItemCallback<GenderItem>() {
         override fun areItemsTheSame(oldItem: GenderItem, newItem: GenderItem): Boolean =
             oldItem.id == newItem.id
 

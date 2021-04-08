@@ -13,6 +13,7 @@ abstract class BaseAdapter< ItemViewBinding : ViewBinding,Item, ViewHolder : Bas
         with(holder) {
             bind(getItem(position))
             itemView.setOnClickListener {
+                if(position<=currentList.size-1)
                 onItemClick(getItem(position))
             }
         }

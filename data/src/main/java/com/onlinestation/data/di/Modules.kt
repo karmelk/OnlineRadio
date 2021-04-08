@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.room.Room
 import com.kmworks.appbase.utils.Constants.Companion.BASE_API_URL
 import com.kmworks.appbase.utils.Constants.Companion.BASE_OWNER_SERVER_API_URL
-import com.onlinestation.data.dataservice.apiservice.AllApiService
 import com.onlinestation.data.dataservice.sqlservice.AppDatabase
 import com.onlinestation.data.dataservices.appservice.PreferenceService
 import com.onlinestation.data.dataservices.appservice.PreferenceServiceImpl
@@ -57,7 +56,6 @@ val apiModule = module {
             .build()
     }
 
-    single<AllApiService> { get<Retrofit>(named("Shoutcast")).create(AllApiService::class.java) }
     single<OwnerServerApiService> { get<Retrofit>().create(OwnerServerApiService::class.java) }
 }
 
@@ -77,7 +75,7 @@ val databaseModule = module {
 }
 
 val repositoryModule = module {
-    single<GenreRepository> { GenreRepositoryImpl(get(),get(),get()) }
+    single<GenreRepository> { GenreRepositoryImpl(get(),get()) }
     single<RandomStationRepository> { RandomStationRepositoryImpl(get()) }
     single<PreferenceService> { PreferenceServiceImpl(get()) }
     single<StationListByGenreIdRepository> { StationListByGenreIdRepositoryImpl(get()) }

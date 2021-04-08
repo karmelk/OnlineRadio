@@ -42,7 +42,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/icSearchIcon"
+                    android:id="@+id/searchIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dp_13"
@@ -63,12 +63,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/icSettings"
-                        app:layout_constraintStart_toEndOf="@+id/icCloseSearch"
+                        app:layout_constraintEnd_toStartOf="@+id/settings"
+                        app:layout_constraintStart_toEndOf="@+id/closeSearch"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icCloseSearch"
+                        android:id="@+id/closeSearch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dp_12"
@@ -78,17 +78,17 @@
                         app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icSearch"
+                        android:id="@+id/search"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dp_12"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/icSettings"
+                        app:layout_constraintEnd_toStartOf="@+id/settings"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_searched_for_white_24dp" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icSettings"
+                        android:id="@+id/settings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dp_14"
@@ -101,7 +101,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -144,14 +143,14 @@
         android:layout_height="0dp"
         android:visibility="visible"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/lContainerBottomPanel"
+        app:layout_constraintBottom_toTopOf="@+id/containerBottomPanel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout"
         app:navGraph="@navigation/nav_main" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/lContainerBottomPanel"
+        android:id="@+id/containerBottomPanel"
         android:layout_width="0dp"
         android:layout_height="@dimen/dp_60"
         android:background="@color/colorPrimaryDark"
@@ -160,7 +159,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vStationIcon"
+            android:id="@+id/stationIcon"
             android:layout_width="@dimen/dp_50"
             android:layout_height="@dimen/dp_50"
             android:layout_marginStart="@dimen/dp_10"
@@ -179,7 +178,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vPrevious"
+            android:id="@+id/previous"
             android:layout_width="@dimen/dp_60"
             android:layout_height="@dimen/dp_60"
             android:layout_marginEnd="@dimen/dp_20"
@@ -189,7 +188,7 @@
             app:srcCompat="@drawable/ic_previous_bottom_panel" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vNext"
+            android:id="@+id/next"
             android:layout_width="@dimen/dp_60"
             android:layout_height="@dimen/dp_60"
             android:layout_marginStart="@dimen/dp_20"
@@ -199,19 +198,17 @@
             app:srcCompat="@drawable/ic_next_bottom_panel" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vPlayPause"
-            play_pause="@{viewModel.playPauseIcon}"
+            android:id="@+id/playPause"
             android:layout_width="@dimen/dp_60"
             android:layout_height="@dimen/dp_60"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_pause_bottom_panel" />
+            app:srcCompat="@drawable/ic_play_bottom_panel" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vFavorite"
-            add_favorite="@{viewModel.isFavorite()}"
+            android:id="@+id/favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_10"
@@ -222,13 +219,13 @@
             tools:srcCompat="@drawable/ic_favorite_selected_24dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vShare"
+            android:id="@+id/share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/dp_5"
             android:padding="@dimen/dp_5"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/vFavorite"
+            app:layout_constraintEnd_toStartOf="@+id/favorite"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_share_24" />
 

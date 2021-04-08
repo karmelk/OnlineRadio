@@ -15,16 +15,18 @@ fun StationItemDb.fromDBStationToStation(
 ) = StationItem(
     id = id,
     name = name,
-    icon = BASE_OWNER_SERVER_API_URL + FOLDER_RADIOS + icon,
+    icon = icon,
     stationUrl = stationUrl,
     isFavorite = isFavorite
 )
+
 fun StationItem.fromStationToStationDB() = StationItemDb(
     id = id,
     name = name,
-    icon = BASE_OWNER_SERVER_API_URL + FOLDER_RADIOS + icon,
+    icon = icon,
     stationUrl = stationUrl
 )
+
 fun StationItemResponse.fromDBStationToStation(
     isFavorite: Boolean
 ) = StationItem(

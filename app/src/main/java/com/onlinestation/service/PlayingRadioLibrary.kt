@@ -13,7 +13,7 @@ class PlayingRadioLibrary {
         stationList.addAll(stations)
     }
 
-    fun updateLibraryStation(stations: MutableList<StationItem>, fragmentName: String) {
+    fun updateLibraryStation(stations: List<StationItem>, fragmentName: String) {
         if (currentStationFragmentName != fragmentName) {
             currentStationFragmentName=fragmentName
             stationList.clear()

@@ -5,24 +5,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kmworks.appbase.utils.Constants
 import com.kmworks.appbase.viewmodel.BaseViewModel
+import com.onlinestation.domain.interactors.SqlRoomInteractor
 import com.onlinestation.domain.interactors.StationListByGenreIdInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.onlinestation.entities.Result
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
 import kotlinx.coroutines.launch
 
 class StationListByGenreIdViewModel(
-    private val stationListByGenreIdInteractor: StationListByGenreIdInteractor
-
+    private val stationListByGenreIdInteractor: StationListByGenreIdInteractor,
+    private val sqlRoomInteractor: SqlRoomInteractor
 ) : BaseViewModel() {
 
     private val _errorNotBalanceLD by lazy { MutableLiveData<Unit>() }
     val errorNotBalanceLD get() = _errorNotBalanceLD
-    private val _getStationsListLD by lazy { MutableLiveData<MutableList<StationItem>>() }
-    val getStationsListLD: LiveData<MutableList<StationItem>> get() = _getStationsListLD
-
+    private val _getStationsListLD by lazy { MutableLiveData<List<StationItem>>() }
+    val getStationsListLD: LiveData<List<StationItem>> get() = _getStationsListLD
+    private val _errorAddStationLD by lazy { MutableLiveData<Unit>() }
+    val errorAddStationLD get() = _errorAddStationLD
     private val _errorStationsListLD by lazy { MutableLiveData<Unit>() }
     val errorStationsListLD: LiveData<Unit> get() = _errorStationsListLD
 
@@ -41,24 +42,27 @@ class StationListByGenreIdViewModel(
         }
     }
 
-    fun addStationLocalDB(item: StationItem) {
-
-        when (val data = stationListByGenreIdInteractor.addRemoveStationDataLocalDB(item)) {
-            is Result.Success -> {
-                _getStationsListLD.value = data.data
-            }
-            is Result.Error -> {
-                when (data.errors.errorCode) {
-                    Constants.errorNotBalanceCode -> {
-                        _errorNotBalanceLD.value = Unit
+    fun addRemoveStationLocalDB(item: StationItem) {
+        viewModelScope.launch(Dispatchers.Main) {
+            when (val data =
+                sqlRoomInteractor.addRemoveStationFromDB(item, _getStationsListLD.value)) {
+                is Result.Success -> {
+                    _getStationsListLD.value = data.data
+                }
+                is Result.Error -> {
+                    when (data.errors.errorCode) {
+                        Constants.errorNotBalanceCode -> {
+                            _errorNotBalanceLD.value = Unit
+                        }
+                        Constants.notFountIndexExaction -> {
+                            _errorAddStationLD.value = Unit
+                        }
                     }
                 }
             }
         }
     }
 
-
-    fun getBalanceData(): OwnerUserBalance? = stationListByGenreIdInteractor.getBalanceData()
 
 }
 

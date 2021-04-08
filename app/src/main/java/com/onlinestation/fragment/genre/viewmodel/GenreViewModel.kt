@@ -37,15 +37,6 @@ class GenreViewModel(private val genreInteractor: GenreInteractor) : BaseViewMod
         }
     }
 
-    private fun getGenderListDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            when (val userData = genreInteractor.getGenreListDataDB()) {
-                is Result.Success -> withContext(Dispatchers.Main) {
-                    _getGenderData.value = userData.data
-                }
-            }
-        }
-    }
 
 
 }

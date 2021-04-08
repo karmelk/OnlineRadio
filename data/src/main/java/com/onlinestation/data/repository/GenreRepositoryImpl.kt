@@ -1,6 +1,5 @@
 package com.onlinestation.data.repository
 
-import com.onlinestation.data.dataservice.apiservice.AllApiService
 import com.onlinestation.data.dataservice.apiservice.OwnerServerApiService
 import com.onlinestation.data.datastore.LocalSQLRepository
 import com.onlinestation.data.datastore.GenreRepository
@@ -15,14 +14,13 @@ import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemD
 import com.onlinestation.entities.responcemodels.gendermodels.server.ResponseGender
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
 import retrofit2.Response
-class GenreRepositoryImpl(private val allApiService: AllApiService,
-                          private val ownerServerApiService: OwnerServerApiService,
+class GenreRepositoryImpl(private val ownerServerApiService: OwnerServerApiService,
                           private val localSQLRepository: LocalSQLRepository) : GenreRepository {
 
     override suspend fun getGenreListData(queryBody: QueryGenreBody): Result<List<ResponseGender>> =
         makeApiCall({
             getGenderData(
-                ownerServerApiService.getPrimaryOwnerGenreList(queryBody.method,queryBody.apiKey)
+                ownerServerApiService.getGenreList(queryBody.method,queryBody.apiKey)
             )
         })
 
@@ -31,7 +29,7 @@ class GenreRepositoryImpl(private val allApiService: AllApiService,
         localSQLRepository.addGenreListDB(genderDatumDbs)
     }
 
-    override fun getPrimaryGenreDataDB(): MutableList<GenderItemDb>? = localSQLRepository.getGenreListDB()
+    override suspend fun getPrimaryGenreDataDB(): List<GenderItemDb>? = localSQLRepository.getGenreListDB()
 
     private fun getPrimaryGenderData(response: Response<ResponseObjectGenre<GenderItemDb>>): Result<MutableList<GenderItemDb>> =
         analyzeResponseGenre(response)
@@ -39,7 +37,7 @@ class GenreRepositoryImpl(private val allApiService: AllApiService,
     private fun getGenderData(response: Response<ParentResponse<ResponseGender>>): Result<List<ResponseGender>> =
         analyzeResponse(response)
 
-    override suspend fun checkStationInDB(itemId: Long): StationItemDb? =localSQLRepository.getItemStationDB(itemId)
+    override suspend fun checkStationInDB(itemId: Int): StationItemDb? =localSQLRepository.getItemStationDB(itemId)
 
 
 }

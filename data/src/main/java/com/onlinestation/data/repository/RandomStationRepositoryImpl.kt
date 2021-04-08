@@ -1,36 +1,35 @@
 package com.onlinestation.data.repository
 
-import com.onlinestation.data.dataservice.apiservice.AllApiService
+import com.onlinestation.data.dataservice.apiservice.OwnerServerApiService
 import com.onlinestation.data.datastore.RandomStationRepository
+import com.onlinestation.data.util.analyzeResponse
 import com.onlinestation.data.util.makeApiCall
-import com.onlinestation.data.util.analyzeResponseStation
 import com.onlinestation.entities.Result
-import com.onlinestation.entities.localmodels.QueryRandomStationBody
+import com.onlinestation.entities.localmodels.QueryTopStationBody
+import com.onlinestation.entities.responcemodels.ParentResponse
 
 
-import com.onlinestation.entities.responcemodels.stationmodels.ResponseObjectStation
-import com.onlinestation.entities.responcemodels.stationmodels.ResponseStationList
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
 import retrofit2.Response
 
-class RandomStationRepositoryImpl(private val allApiService: AllApiService) :
+class RandomStationRepositoryImpl(private val allApiService: OwnerServerApiService) :
     RandomStationRepository {
-    override suspend fun getRandomStationData(
-        queryBody: QueryRandomStationBody
-    ): Result<ResponseStationList<StationItemResponse>> =
+
+    override suspend fun getTopStations(queryBody: QueryTopStationBody): Result<List<StationItemResponse>> =
 
         makeApiCall({
-            getRandomStationData(
-                allApiService.getRandomStationList(
+            getTopStationData(
+                allApiService.getTopStation(
+                    queryBody.method,
                     queryBody.apiKey,
-                    queryBody.stationFormat,
+                    queryBody.offset,
                     queryBody.limit,
-                    queryBody.dataFormat
+                    queryBody.isFeature
                 )
             )
         })
 
-    private fun getRandomStationData(response: Response<ResponseObjectStation<StationItemResponse>>): Result<ResponseStationList<StationItemResponse>> =
-        analyzeResponseStation(response)
+    private fun getTopStationData(response: Response<ParentResponse<StationItemResponse>>): Result<List<StationItemResponse>> =
+        analyzeResponse(response)
 
 }

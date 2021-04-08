@@ -24,47 +24,38 @@ class LocalSQLRepositoryImpl(
         genreDto.saveGenre(itemDb)
     }
 
-    override fun getGenreListDB(): MutableList<GenderItemDb>? =genreDto.getGenreList()
+    override suspend fun getGenreListDB(): MutableList<GenderItemDb>? = genreDto.getGenreList()
 
-    override suspend fun removeStationDB(itemId: Long) {
+    override suspend fun removeStationDB(itemId: Int) {
         stationDao.deleteStationById(itemId)
     }
 
-    override suspend fun getAllStationListDB(): MutableList<StationItemDb> =
+    override suspend fun getAllStationListDB(): List<StationItemDb> =
         stationDao.getAllStationList()
 
-    override suspend fun getItemStationDB(id: Long): StationItemDb? =
+    override suspend fun getItemStationDB(id: Int): StationItemDb? =
         stationDao.getItemStation(id)
 
     override fun getBalanceDB(): OwnerUserBalance? = balanceDto.getBalance()
 
 
-    @Suppress("EXPERIMENTAL_API_USAGE", "NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE")
-    override suspend fun updateBalanceDB(balanceCount: OwnerUserBalance) =
-        channelFlow<OwnerUserBalance> {
-            balanceDto.updateBalance(balanceCount)
-            updateDefaultBalance(balanceCount, channel)
-            awaitClose {}
-        }
+    override suspend fun updateBalanceDB(balanceCount: OwnerUserBalance) {
+        balanceDto.updateBalance(balanceCount)
+    }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override suspend fun rewardBalanceDB(balanceCount: OwnerUserBalance) =
         channelFlow<OwnerUserBalance> {
             val currentBalance = getBalanceDB()
             currentBalance?.apply {
-                balance += balanceCount.balance
-                balanceDto.updateBalance(this)
-                updateDefaultBalance(this, channel)
-            } ?: updateDefaultBalance(balanceCount, channel)
-
+                val updateBalance = this.copy(balance = balance.plus(balanceCount.balance))
+                balanceDto.updateBalance(updateBalance)
+                channel.send(updateBalance)
+            } ?: run {
+                balanceDto.updateBalance(balanceCount)
+                channel.send(balanceCount)
+            }
             awaitClose {}
         }
 
-    private fun updateDefaultBalance(
-        balanceCount: OwnerUserBalance,
-        channel: SendChannel<OwnerUserBalance>
-    ) {
-        balanceDto.updateBalance(balanceCount)
-        channel.offer(balanceCount)
-    }
 }

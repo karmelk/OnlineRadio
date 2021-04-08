@@ -1,21 +1,21 @@
 package com.onlinestation.fragment.stationsbygenderId
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
 import com.kmworks.appbase.adapter.BaseAdapter
 import com.kmworks.appbase.adapter.BaseViewHolder
-import com.onlinestation.R
 import com.onlinestation.databinding.ItemStationBinding
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.utils.loadImageCircle
+import com.onlinestation.utils.stationIsFavorite
 
-
-
-
-class StationListByGenreIdAdapter : BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
+class StationListByGenreIdAdapter(
+    val addRemoveStation: (item: StationItem) -> Unit,
+    var playStation: (stationId: Int) -> Unit
+) :
+    BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
         DiffCallback()
     ) {
 
@@ -31,43 +31,27 @@ class StationListByGenreIdAdapter : BaseAdapter<ViewBinding, StationItem, BaseVi
         )
     )
 
-    internal inner class MyViewHolder(val binding: ItemStationBinding) :
+    private inner class MyViewHolder(val binding: ItemStationBinding) :
         BaseViewHolder<StationItem, ViewBinding>(binding) {
         override fun bind(item: StationItem) {
-            binding.run {
-                if (item.isFavorite) {
-                    favorite.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.ic_favorite_selected_24dp
-                        )
-                    )
-                } else {
-                    favorite.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.ic_favorite_unselected_24dp
-                        )
-                    )
+            with(binding) {
+                stationLogo.loadImageCircle(item.icon)
+                favorite.stationIsFavorite(item.isFavorite)
+                stationName.text = item.name
+                favorite.setOnClickListener {
+                    addRemoveStation(item)
                 }
-
-                /*binding.favorite.setOnClickListener {
-                    removeFavoriteItem(item.id)
-                }*/
             }
         }
     }
 
-    internal class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
+    private class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
         override fun areItemsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
             oldItem.id == newItem.id
 
-        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
             oldItem == newItem
-
-        override fun getChangePayload(oldItem: StationItem, newItem: StationItem): Any? {
-            return super.getChangePayload(oldItem, newItem)
-        }
     }
+
+
 }

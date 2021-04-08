@@ -9,7 +9,7 @@ import com.onlinestation.entities.responcemodels.stationmodels.server.StationIte
 interface GenreRepository {
     suspend fun getGenreListData(queryBody: QueryGenreBody): Result<List<ResponseGender>>
     suspend fun saveGenreDB(genderDatumDbs: List<GenderItemDb>)
-    fun getPrimaryGenreDataDB(): MutableList<GenderItemDb>?
-    suspend fun checkStationInDB(itemId: Long) : StationItemDb?
+    suspend fun getPrimaryGenreDataDB(): List<GenderItemDb>?
+    suspend fun checkStationInDB(itemId: Int) : StationItemDb?
 
 }

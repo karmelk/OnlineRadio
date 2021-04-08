@@ -14,8 +14,6 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val mainActivityInteractor: MainActivityInteractor
 ) : BaseViewModel() {
-    private val _primaryGenreDB by lazy { MutableLiveData<MutableList<GenderItem>>() }
-    val primaryGenreDB: LiveData<MutableList<GenderItem>> get() = _primaryGenreDB
 
     private val _addFavorite = MutableLiveData<Boolean>(false)
     val isFavorite: LiveData<Boolean> get() = _addFavorite
@@ -34,15 +32,6 @@ class MainViewModel(
         mainActivityInteractor.getBalanceData()
     }
 
-    fun getGenderListDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            when (val userData = mainActivityInteractor.getGenderDB()) {
-                is Result.Success -> withContext(Dispatchers.Main) {
-                    _primaryGenreDB.value = userData.data
-                }
-            }
-        }
-    }
 
     fun checkStationInDB(stationID: Int) {
         viewModelScope.launch(Dispatchers.IO) {

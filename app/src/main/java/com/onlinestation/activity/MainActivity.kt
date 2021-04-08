@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
@@ -27,7 +28,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.kmworks.appbase.utils.viewBinding
 import com.onlinestation.R
-import com.onlinestation.adapter.PopUpGenderAdapter
 import com.onlinestation.databinding.ActivityMainBinding
 import com.onlinestation.entities.localmodels.GenderItem
 import com.onlinestation.fragment.searchradios.SearchFragment
@@ -36,7 +36,12 @@ import com.onlinestation.service.PlayingRadioLibrary
 import com.onlinestation.service.RadioService
 import com.onlinestation.utils.getCurrentFragment
 import com.onlinestation.utils.hideKeyboard
+import com.onlinestation.utils.textChanges
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,9 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     lateinit var nav: NavController
     private lateinit var navOptions: NavOptions
-    private var searchKeyword: String? = null
-    private var selectedGenderName: String? = null
-    private var genreList: MutableList<GenderItem>? = null
+
     var mMediaBrowserHelper: MediaBrowserHelper? = null
     private var mIsPlaying = false
 
@@ -69,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initObserves() {
         with(mainViewModel) {
-            primaryGenreDB.observe(this@MainActivity, Observer(::showSearchView))
+
             nextStation.observe(this@MainActivity, Observer {
                 mMediaBrowserHelper?.getTransportControls()?.skipToNext()
             })
@@ -86,10 +89,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSearchView(genreList: MutableList<GenderItem>) {
-        this.genreList = genreList
+    private fun showSearchView() {
+
         with(binding) {
-            icSearchIcon.visibility = GONE
+            searchIcon.visibility = GONE
             appName.visibility = GONE
             searchContainer.visibility = VISIBLE
             tabLayout.visibility = GONE
@@ -101,42 +104,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun initClickListener() {
         with(binding) {
-            icSearchIcon.setOnClickListener {
-                mainViewModel.getGenderListDB()
+            searchIcon.setOnClickListener {
+                showSearchView()
             }
-            icCloseSearch.setOnClickListener {
+            closeSearch.setOnClickListener {
                 searchContainer.visibility = GONE
-                icSearchIcon.visibility = VISIBLE
+                searchIcon.visibility = VISIBLE
                 appName.visibility = VISIBLE
                 editSearch.text?.clear()
                 tabLayout.visibility = VISIBLE
-                selectedGenderName = null
-                hideKeyboard(this@MainActivity, window.decorView)
+                hideKeyboard(window.decorView)
                 nav.navigateUp()
             }
-            icSettings.setOnClickListener {
-                genreList?.apply {
-                    selectCategory(it, this)
-                }
-            }
-            icSearch.setOnClickListener {
-                getCurrentFragment<SearchFragment>(navHostFragment)?.run {
-                    searchKeyword?.apply {
-                        if (length >= 2) {
-                            this@run.searchRadio(this, selectedGenderName)
+
+
+            editSearch.textChanges()
+                .debounce(300)
+                .onEach {
+                    getCurrentFragment<SearchFragment>(navHostFragment)?.run {
+                        it?.apply {
+                            this@run.searchRadio(this.toString())
                         }
                     }
-                }
-            }
-            editSearch.doOnTextChanged { text, _, _, _ ->
-                text?.run {
-                    searchKeyword = if (length >= 2) {
-                        this.toString()
-                    } else {
-                        null
-                    }
-                }
-            }
+                }.launchIn(lifecycleScope)
+
         }
     }
 
@@ -148,31 +139,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mMediaBrowserHelper?.onStop()
-    }
-
-    private fun selectCategory(
-        it: View,
-        mutableList: MutableList<GenderItem>
-    ) {
-
-        val lInflater: LayoutInflater =
-            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = lInflater.inflate(R.layout.popup_category_dialog, null)
-        val rvGenderr = view.findViewById<ListView>(R.id.rvGenre)
-        val myPopupWindow = PopupWindow(
-            view,
-            resources.getDimensionPixelSize(R.dimen.dp_180),
-            resources.getDimensionPixelSize(R.dimen.dp_240),
-            true
-        )
-        val customAdapter = PopUpGenderAdapter(
-            this,
-            mutableList
-        ) { genderName ->
-            selectedGenderName = genderName
-        }
-        rvGenderr.adapter = customAdapter
-        myPopupWindow.showAsDropDown(it)
     }
 
     private fun initData() {
@@ -215,11 +181,11 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             if (searchContainer.isVisible) {
                 searchContainer.visibility = GONE
-                icSearchIcon.visibility = VISIBLE
+                searchIcon.visibility = VISIBLE
                 appName.visibility = VISIBLE
                 editSearch.text?.clear()
                 tabLayout.visibility = VISIBLE
-                hideKeyboard(this@MainActivity, window.decorView)
+                hideKeyboard(window.decorView)
                 tabLayout.touchables?.forEach { it.isEnabled = true }
             } else {
                 tabLayout.getTabAt(0)?.select()
@@ -296,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                         R.drawable.ic_default_station
                     )
                 )
-                .into(vStationIcon)
+                .into(stationIcon)
         }
 
         override fun onSessionDestroyed() {

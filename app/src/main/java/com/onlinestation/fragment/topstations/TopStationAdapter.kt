@@ -1,5 +1,6 @@
-package com.onlinestation.fragment.searchradios
+package com.onlinestation.fragment.topstations
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,10 +12,10 @@ import com.onlinestation.entities.responcemodels.stationmodels.server.StationIte
 import com.onlinestation.utils.loadImageCircle
 import com.onlinestation.utils.stationIsFavorite
 
-class SearchStationAdapter(
-    val addRemoveStation: (item: StationItem) -> Unit,
+class TopStationAdapter(
+    var addRemoveStation: (item: StationItem) -> Unit,
     var playStation: (stationId: Int) -> Unit
-) :  BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
+) :   BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
     DiffCallback()
 ) {
 
@@ -48,8 +49,9 @@ class SearchStationAdapter(
         override fun areItemsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
             oldItem.id == newItem.id
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
             oldItem == newItem
-    }
 
+    }
 }

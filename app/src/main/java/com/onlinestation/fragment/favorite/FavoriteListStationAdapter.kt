@@ -15,9 +15,11 @@ import com.onlinestation.databinding.ItemGenreBinding
 import com.onlinestation.databinding.ItemStationFavoriteBinding
 import com.onlinestation.entities.localmodels.GenderItem
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.utils.loadImageCircle
+import com.onlinestation.utils.stationIsFavorite
 
 
-class FavoriteListStationAdapter :
+class FavoriteListStationAdapter(val addRemoveStation: (item: StationItem) -> Unit) :
     BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
         DiffCallback()
     ) {
@@ -34,44 +36,32 @@ class FavoriteListStationAdapter :
             )
         )
 
-
-    inner class MyViewHolder(private val binding: ItemStationFavoriteBinding) :
+    private inner class MyViewHolder(private val binding: ItemStationFavoriteBinding) :
         BaseViewHolder<StationItem, ViewBinding>(binding) {
 
         override fun bind(item: StationItem) {
 
             with(binding) {
-                if (item.isFavorite) {
-                    favorite.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.ic_favorite_selected_24dp
-                        )
-                    )
-                } else {
-                    favorite.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.ic_favorite_unselected_24dp
-                        )
-                    )
+                stationLogo.loadImageCircle(item.icon)
+                favorite.stationIsFavorite(item.isFavorite)
+                stationName.text = item.name
+                favorite.setOnClickListener {
+                    addRemoveStation(item)
                 }
             }
 
         }
     }
-}
 
-internal class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
-    override fun areItemsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
-        oldItem.id == newItem.id
+   private class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
+        override fun areItemsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
+            oldItem.id == newItem.id
 
-    @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
-        oldItem == newItem
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
+            oldItem == newItem
 
-    override fun getChangePayload(oldItem: StationItem, newItem: StationItem): Any? {
-        return super.getChangePayload(oldItem, newItem)
     }
+
 }
 

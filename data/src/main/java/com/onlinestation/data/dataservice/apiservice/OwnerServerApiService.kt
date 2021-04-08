@@ -11,7 +11,7 @@ import retrofit2.http.Query
 interface OwnerServerApiService {
 
     @GET("api/api.php")
-    suspend fun getPrimaryOwnerGenreList(
+    suspend fun getGenreList(
         @Query("method") method: String,
         @Query("api_key") key: String
     ): Response<ParentResponse<ResponseGender>>
@@ -23,5 +23,23 @@ interface OwnerServerApiService {
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
         @Query("genre_id") id: Long
+    ): Response<ParentResponse<StationItemResponse>>
+
+    @GET("api/api.php")
+    suspend fun getTopStation(
+        @Query("method") method: String,
+        @Query("api_key") key: String,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
+        @Query("is_feature") id: Byte
+    ): Response<ParentResponse<StationItemResponse>>
+
+    @GET("api/api.php")
+    suspend fun getSearchStationList(
+        @Query("method") method: String,
+        @Query("api_key") key: String,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
+        @Query("q") id: String
     ): Response<ParentResponse<StationItemResponse>>
 }

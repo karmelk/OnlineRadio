@@ -4,7 +4,6 @@ import android.widget.*
 import androidx.lifecycle.Observer
 import com.kmworks.appbase.FragmentBaseMVVM
 import com.kmworks.appbase.utils.viewBinding
-
 import com.onlinestation.activity.MainActivity
 import com.onlinestation.databinding.FragmentStationListByGenreIdBinding
 import com.onlinestation.fragment.stationsbygenderId.viewmodel.StationListByGenreIdViewModel
@@ -28,32 +27,46 @@ class StationListByGenreIdFragment :
         const val GENRE_ID = "genreId"
     }
 
-    override fun initData() {
-        genreId = arguments?.getLong(GENRE_ID, 0) ?: 0
-    }
-
     override fun onView() {
+        genreId = arguments?.getLong(GENRE_ID, 0) ?: 0
         initFragmentView()
         initViewModel()
         viewModel.getStationsByGenreIdList(genreId)
     }
 
     override fun observes() {
-        observe(viewModel.getStationsListLD) {
-            stationAdapter.submitList(it)
-        }
-        observe(viewModel.errorNotBalanceLD) {
-            Toast.makeText(
-                requireContext(),
-                "Your balance is empty",
-                Toast.LENGTH_SHORT
-            ).show()
+        with(viewModel) {
+            observe(getStationsListLD) {
+                stationAdapter.submitList(it)
+            }
+
+            observe(errorAddStationLD) {
+                Toast.makeText(
+                    requireContext(),
+                    "Can not save radio",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            observe(errorNotBalanceLD) {
+                Toast.makeText(
+                    context,
+                    "Your balance is empty",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
-
     private fun initFragmentView() {
-        stationAdapter = StationListByGenreIdAdapter()
+        stationAdapter = StationListByGenreIdAdapter(
+            { item ->
+                viewModel.addRemoveStationLocalDB(item)
+            },
+            { stationId ->
+                viewModel.loadData(stationId.toLong())
+            }
+        )
         stationsByGenreIdRV.adapter = stationAdapter
     }
 

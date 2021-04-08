@@ -3,36 +3,41 @@ package com.onlinestation.fragment.searchradios.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kmworks.appbase.utils.Constants
+import com.kmworks.appbase.utils.Constants.Companion.errorDataEmpty
 import com.kmworks.appbase.viewmodel.BaseViewModel
 import com.onlinestation.domain.interactors.SearchStationInteractor
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
+import com.onlinestation.domain.interactors.SqlRoomInteractor
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import com.onlinestation.entities.Result
 import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchViewModel(private val searchStationInteractor: SearchStationInteractor) :
-    BaseViewModel() {
+class SearchViewModel(
+    private val searchStationInteractor: SearchStationInteractor,
+    private val sqlRoomInteractor: SqlRoomInteractor
+) : BaseViewModel() {
 
-    private val _successAddStationLD by lazy { MutableLiveData<StationItem>() }
-    private val _errorAddStationLD by lazy { MutableLiveData<StationItem>() }
-    private val _errorNotBalanceLD by lazy { MutableLiveData<StationItem>() }
-    private val _getSearchStationLD by lazy { MutableLiveData<MutableList<StationItem>>() }
-    val successAddStationLD get() = _successAddStationLD
+    private val _errorAddStationLD by lazy { MutableLiveData<Unit>() }
     val errorAddStationLD get() = _errorAddStationLD
+    private val _errorNotBalanceLD by lazy { MutableLiveData<Unit>() }
     val errorNotBalanceLD get() = _errorNotBalanceLD
+    private val _getSearchStationLD by lazy { MutableLiveData<List<StationItem>>() }
     val getSearchStationLD get() = _getSearchStationLD
 
-    fun searchStation(searchKeyword: String, genre: String?) {
+    fun searchStation(searchKeyword: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val userData = searchStationInteractor.searchStationListData(searchKeyword, genre)) {
+            when (val result = searchStationInteractor.searchStationListData(searchKeyword)) {
                 is Result.Success -> withContext(Dispatchers.Main) {
-                   // _getSearchStationLD.value = userData.data
+                    _getSearchStationLD.value = result.data
                 }
-                is Result.Error -> {
-
+                is Result.Error -> withContext(Dispatchers.Main) {
+                    when (result.errors.errorCode) {
+                        errorDataEmpty -> {
+                            _getSearchStationLD.value = result.errors.errorBody
+                            showEmptyData()
+                        }
+                    }
                 }
             }
         }
@@ -40,31 +45,26 @@ class SearchViewModel(private val searchStationInteractor: SearchStationInteract
 
     fun addStationLocalDB(item: StationItem) {
         viewModelScope.launch(Dispatchers.IO) {
-           /* searchStationInteractor.addStationDataLocalDB(item).collect { data ->
-                when (data) {
-                    is Result.Success -> withContext(Dispatchers.Main) {
-                        _successAddStationLD.value = data.data
-                    }
-                    is Result.Error -> withContext(Dispatchers.Main) {
-                        when (data.errors.errorCode) {
-                            Constants.errorNotBalanceCode -> {
-                                _errorNotBalanceLD.value = data.errors.errorBody
-                            }
-                            Constants.errorDefaultCode -> {
-                                _errorAddStationLD.value = data.errors.errorBody
-                            }
+
+            when (val data =
+                sqlRoomInteractor.addRemoveStationFromDB(item, _getSearchStationLD.value)) {
+                is Result.Success -> withContext(Dispatchers.Main) {
+                    _getSearchStationLD.value = data.data
+                }
+                is Result.Error -> withContext(Dispatchers.Main) {
+                    when (data.errors.errorCode) {
+                        Constants.errorNotBalanceCode -> {
+                            _errorNotBalanceLD.value = Unit
+                        }
+                        Constants.notFountIndexExaction -> {
+                            _errorAddStationLD.value = Unit
                         }
                     }
                 }
-            }*/
+            }
+
         }
     }
 
-    fun removeStationLocalDB(itemId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            searchStationInteractor.removeStationDataLocalDB(itemId)
-        }
-    }
 
-    fun getBalanceData(): OwnerUserBalance? = searchStationInteractor.getBalanceData()
 }

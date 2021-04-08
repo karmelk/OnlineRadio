@@ -11,10 +11,14 @@ abstract class Constants {
 
         //const val STATION_FORMAT: String = "audio/mpeg"
         const val LIMIT: Int = 100
+        const val OFFSET: Int = 0
         const val errorDefaultCode=-1
         const val errorAddStationCode=100
         const val errorNotBalanceCode=101
         const val errorDataNull=102
+        const val errorDataEmpty=105
+        const val notFountIndexExaction=103
+        const val notFountItemIntoListExaction=104
         const val defaultUserID=100
         const val defaultUserBalanceCount=5
 

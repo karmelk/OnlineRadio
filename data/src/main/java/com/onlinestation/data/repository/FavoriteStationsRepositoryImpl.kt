@@ -8,10 +8,10 @@ class FavoriteStationsRepositoryImpl(private val stationDao: FavoriteDao) :
     FavoriteStationsRepository {
 
 
-    override suspend fun removeStationLocalDB(itemId: Long) {
+    override suspend fun removeStationLocalDB(itemId: Int) {
         stationDao.deleteStationById(itemId)
     }
 
-    override suspend fun getAllStationListLocalDB(): MutableList<StationItemDb> =
+    override suspend fun getAllStationListLocalDB(): List<StationItemDb> =
         stationDao.getAllStationList()
 }

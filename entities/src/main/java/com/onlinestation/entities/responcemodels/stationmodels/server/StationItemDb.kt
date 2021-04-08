@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class StationItemDb(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: Int,
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "icon")

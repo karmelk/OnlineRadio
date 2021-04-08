@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.onlinestation.R
 import com.onlinestation.databinding.ItemStationBinding
 import java.io.BufferedReader
@@ -19,22 +21,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-fun hideKeyboard(activity: Activity, viewToHide: View?) {
-    viewToHide?.let {
-        val imm = activity
-            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(it.windowToken, 0)
-    }
-}
-
-fun <T : ViewDataBinding> ViewGroup.inflate(layoutId: Int): T {
-    return DataBindingUtil.inflate(
-        LayoutInflater.from(context),
-        layoutId,
-        this,
-        false
-    )
-}
 
 inline fun <reified F> getCurrentFragment(navHostFragment: NavHostFragment): F? {
     return if (navHostFragment.isAdded && navHostFragment.childFragmentManager.fragments.size > 0) {
@@ -45,6 +31,16 @@ inline fun <reified F> getCurrentFragment(navHostFragment: NavHostFragment): F? 
         }
     } else null
 }
+
+inline fun wasInit(f: () -> Unit): Boolean {
+    try {
+        f()
+    } catch (e: UninitializedPropertyAccessException) {
+        return false
+    }
+    return true
+}
+
 
 fun parseM3UToString(urlM3u: String?, type: String): String? {
     var ligne: String?

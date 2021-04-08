@@ -20,7 +20,9 @@ class FavoriteFragment : FragmentBaseMVVM<FavoriteViewModel, FragmentFavoriteBin
 
 
     override fun onView() {
-        stationAdapter = FavoriteListStationAdapter()
+        stationAdapter = FavoriteListStationAdapter{
+            viewModel.removeFavoriteItem(it)
+        }
         binding.favoriteStationRV.adapter = stationAdapter
     }
 

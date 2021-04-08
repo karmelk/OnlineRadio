@@ -10,5 +10,5 @@ data class OwnerUserBalance(
     @ColumnInfo(name = "id")
     val id: Int = 0,
     @ColumnInfo(name = "balance")
-    var balance: Int = 0
+    val balance: Int = 0
 )

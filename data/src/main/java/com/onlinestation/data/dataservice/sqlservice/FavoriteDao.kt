@@ -10,13 +10,13 @@ interface FavoriteDao {
      fun insertStation(item: StationItemDb)
 
     @Query("DELETE  FROM stations where id=:itemId")
-     fun deleteStationById(itemId: Long)
+     fun deleteStationById(itemId: Int)
 
     @Query("SELECT * FROM stations")
-     fun getAllStationList(): MutableList<StationItemDb>
+     fun getAllStationList(): List<StationItemDb>
 
     @Query("SELECT * FROM stations where id=:itemId")
-     fun getItemStation(itemId: Long): StationItemDb?
+     fun getItemStation(itemId: Int): StationItemDb?
 
 
 }

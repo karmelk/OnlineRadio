@@ -33,7 +33,6 @@ abstract class FragmentBaseMVVM<ViewModel : BaseViewModel, ViewBind : ViewBindin
         savedInstanceState: Bundle?
     ): View {
         retainInstance = true
-        initData()
         return binding.root
     }
 
@@ -46,7 +45,6 @@ abstract class FragmentBaseMVVM<ViewModel : BaseViewModel, ViewBind : ViewBindin
     }
 
     protected open fun onView(){}
-    protected open fun initData(){}
     protected open fun onViewClick(){}
     protected open fun observes(){}
 

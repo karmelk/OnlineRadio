@@ -11,13 +11,16 @@
         android:label="PrimaryGenderFragment"
         tools:layout="@layout/fragment_genre">
 
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_stations_by_genre_id"
+            app:destination="@id/navigation_stations_by_genre_id" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_random_station"
-        android:name="com.onlinestation.fragment.randomradios.RandomFragment"
+        android:name="com.onlinestation.fragment.topstations.TopStationsFragment"
         android:label="RandomFragment"
-        tools:layout="@layout/fragment_random" />
+        tools:layout="@layout/fragment_top_station" />
 
     <fragment
         android:id="@+id/navigation_favorite"

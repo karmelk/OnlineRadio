@@ -16,19 +16,6 @@ class MainActivityUseCase(
     private val localSQLRepository: LocalSQLRepository
 ) :
     MainActivityInteractor {
-    override fun getGenderDB(): Result<MutableList<GenderItem>> {
-        val genderItems: MutableList<GenderItem> = mutableListOf()
-        genreRepository.getPrimaryGenreDataDB()?.apply {
-            /*   for (item in this) {
-                   genderItems.add(item.toGenreItem())
-               }*/
-            /*  if (genderItems.isNotEmpty()) {
-                  genderItems.add(0, GenderItem("All", true))
-              }*/
-            return Result.Success(genderItems)
-        }
-        return Result.Error(RadioException(Constants.errorDataNull))
-    }
 
     override suspend fun checkStationInDB(itemId: Int): Boolean {
      /*   genreRepository.checkStationInDB(itemId)?.let {
