@@ -142,10 +142,8 @@ open class MediaBrowserHelper(
                     playbackState?.let {
                         mMediaControllerCallback.onPlaybackStateChanged(it)
                     }
+                    this@MediaBrowserHelper.onConnected(mMediaController!!)
                 }
-                // Sync existing MediaSession state to the UI.
-
-                this@MediaBrowserHelper.onConnected(mMediaController!!)
             } catch (e: RemoteException) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()))
                 throw RuntimeException(e)

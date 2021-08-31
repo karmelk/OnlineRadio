@@ -1,10 +1,8 @@
 package com.onlinestation.domain.interactors
 
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
+import com.onlinestation.domain.entities.StationItem
+import com.onlinestation.data.entities.Result
 
 interface TopStationInteractor {
-    suspend fun getTopStationList(): Result<List<StationItem>>
+    suspend operator fun invoke(): Result<List<StationItem>>
 }

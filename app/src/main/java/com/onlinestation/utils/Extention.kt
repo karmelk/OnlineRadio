@@ -1,25 +1,12 @@
 package com.onlinestation.utils
 
-import android.app.Activity
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import com.onlinestation.R
-import com.onlinestation.databinding.ItemStationBinding
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
 
 
 inline fun <reified F> getCurrentFragment(navHostFragment: NavHostFragment): F? {
@@ -41,9 +28,8 @@ inline fun wasInit(f: () -> Unit): Boolean {
     return true
 }
 
-
-fun parseM3UToString(urlM3u: String?, type: String): String? {
-    var ligne: String?
+suspend fun  parseM3UToString(urlM3u: String?, type: String): String {
+    var ligne: String
     try {
         val urlPage = URL(urlM3u)
         val connection = urlPage.openConnection() as HttpURLConnection
@@ -56,7 +42,7 @@ fun parseM3UToString(urlM3u: String?, type: String): String? {
                 while (bufferedReader.readLine().also {
                         ligne = it
                     } != null) {
-                    ligne?.run {
+                    ligne.run {
                         if (this.contains("http")) {
                             connection.disconnect()
                             bufferedReader.close()
@@ -113,5 +99,5 @@ fun parseM3UToString(urlM3u: String?, type: String): String? {
     } catch (e: IOException) {
         e.printStackTrace()
     }
-    return null
+    return ""
 }

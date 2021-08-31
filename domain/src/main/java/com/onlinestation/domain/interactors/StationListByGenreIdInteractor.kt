@@ -1,10 +1,8 @@
 package com.onlinestation.domain.interactors
 
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.domain.entities.StationItem
+import com.onlinestation.data.entities.Result
 
 interface StationListByGenreIdInteractor {
-    suspend fun getStationListByGenreIdData(id: Long): Result<List<StationItem>>
+    suspend operator fun invoke(id: Long): Result<List<StationItem>>
 }

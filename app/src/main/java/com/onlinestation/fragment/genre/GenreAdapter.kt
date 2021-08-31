@@ -7,11 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.kmworks.appbase.adapter.BaseAdapter
-import com.kmworks.appbase.adapter.BaseViewHolder
+import com.onlinestation.appbase.adapter.BaseAdapter
+import com.onlinestation.appbase.adapter.BaseViewHolder
 import com.onlinestation.R
 import com.onlinestation.databinding.ItemGenreBinding
-import com.onlinestation.entities.localmodels.GenderItem
+import com.onlinestation.data.entities.request.GenderItem
 
 class GenreAdapter(val goToStationPage:(id:Long)->Unit) :
     BaseAdapter<ViewBinding, GenderItem, BaseViewHolder<GenderItem, ViewBinding>>(DiffCallback()) {

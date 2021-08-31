@@ -1,17 +1,19 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
+}
 
 android {
-    compileSdkVersion compileVersion
-    buildToolsVersion buildVersion
+    compileSdkVersion app.compileVersion
+    buildToolsVersion app.buildVersion
     defaultConfig {
-        applicationId "com.onlineradio"
-        minSdkVersion minVersion
-        targetSdkVersion targetVersion
-        versionCode appVersionCode
-        versionName appVersionName
+        applicationId app.id
+        minSdkVersion(app.minVersion)
+        targetSdkVersion(app.targetVersion)
+        versionCode app.versionCode
+        versionName app.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -20,10 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -39,37 +38,30 @@ android {
         }
     }
     buildFeatures {
-        // for view binding:
         viewBinding = true
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':entities')
     implementation project(path: ':data')
     implementation project(path: ':domain')
-    implementation project(path: ':appbase')
-    implementation supportDependencies.appcompat
-    implementation supportDependencies.kotlin
-    implementation supportDependencies.coreKtx
-    implementation supportDependencies.junit
-    implementation supportDependencies.junitAndroid
-    implementation supportDependencies.espressoCore
-    implementation supportDependencies.constraintlayout
-    implementation supportDependencies.lifecycle
-    implementation supportDependencies.lifecycleViewmodel
+    implementation libraries.kotlinStdLib
+    implementation androidXLibraries.coreKtx
+    androidTestImplementation androidXLibraries.junitAndroid
+    testImplementation androidXLibraries.junitAndroid
+    implementation androidXLibraries.constraintLayout
+    implementation androidXLibraries.viewModelKtx
+    implementation androidXLibraries.lifecycleCommon
+    implementation androidXLibraries.swiperefresh
+    implementation androidXLibraries.navigationFragmentKtx
+    implementation androidXLibraries.navigationUiKtx
 
-    implementation supportDependencies.koinAndroid
-    implementation supportDependencies.koinViewModel
-    implementation supportDependencies.coroutines
-    implementation supportDependencies.coroutinesAndroid
-    implementation supportDependencies.navigationFragment
-    implementation supportDependencies.navigationUi
-    implementation supportDependencies.cardView
-    implementation supportDependencies.glide
-    implementation supportDependencies.legacySupport
-    annotationProcessor supportDependencies.glideCompiler
-    implementation supportDependencies.exoplayer
-    implementation 'saschpe.android:exoplayer2-ext-icy:1.0.1'
+    implementation libraries.koinAndroid
+    implementation libraries.cardView
+    implementation libraries.glide
+    annotationProcessor libraries.glideCompiler
+    implementation libraries.exoplayer
+
 }

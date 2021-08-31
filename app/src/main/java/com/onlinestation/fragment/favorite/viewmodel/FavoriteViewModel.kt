@@ -3,22 +3,27 @@ package com.onlinestation.fragment.favorite.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kmworks.appbase.utils.Constants
-import com.kmworks.appbase.viewmodel.BaseViewModel
-import com.onlinestation.domain.interactors.FavoriteStationsInteractor
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
-import com.onlinestation.service.PlayingRadioLibrary
+import com.onlinestation.appbase.viewmodel.BaseViewModel
+import com.onlinestation.data.entities.Constants.Companion.notFountIndexExaction
+import com.onlinestation.domain.interactors.AddFavoriteStationsDBInteractor
+import com.onlinestation.domain.entities.StationItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.onlinestation.data.entities.Result
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FavoriteViewModel(
-    private val favoriteStationsInteractor: FavoriteStationsInteractor,
-    private val playingRadioLibrary: PlayingRadioLibrary
+    private val addFavoriteStationsDBInteractor: AddFavoriteStationsDBInteractor
 ) : BaseViewModel() {
-    private val _getStationsListData by lazy { MutableLiveData<List<StationItem>>() }
-    val getStationsListData: LiveData<List<StationItem>> get() = _getStationsListData
+
+    private val _getStationsListData: MutableStateFlow<List<StationItem>?> by lazy { MutableStateFlow(null) }
+    val getStationsListData = _getStationsListData.asStateFlow()
+
+    private val _errorAddStationLD: MutableStateFlow<Unit?> by lazy { MutableStateFlow(null) }
+    val errorAddStationLD = _errorAddStationLD.asStateFlow()
+
 
     init {
         getFavoriteStationList()
@@ -27,25 +32,33 @@ class FavoriteViewModel(
     private fun getFavoriteStationList() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _getStationsListData.value = favoriteStationsInteractor.getAllStationDataLocalDB()
+                val result=addFavoriteStationsDBInteractor.getAllStationDataLocalDB()
+                _getStationsListData.value = result
+                if(result.isNullOrEmpty()){
+                    showEmptyData()
+                }
             }
         }
     }
 
-    fun removeFavoriteItem(item: StationItem) {
+    fun addRemoveStationItem(item: StationItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val data = favoriteStationsInteractor.removeStationDataLocalDB(item)) {
+            when (val result =  addFavoriteStationsDBInteractor.addRemoveStationFromDB(item)) {
                 is Result.Success -> withContext(Dispatchers.Main) {
-                    _getStationsListData.value = data.data
+                    _getStationsListData.value = result.data?.first
+                    addedOrRemovedIsFavorite(result.data?.second)
+                    if(result.data?.first.isNullOrEmpty()){
+                        showEmptyData()
+                    }
                 }
                 is Result.Error -> {
-                    when (data.errors.errorCode) {
-
+                    when (result.errors.errorCode) {
+                        notFountIndexExaction -> {
+                            _errorAddStationLD.value = Unit
+                        }
                     }
                 }
             }
         }
     }
-
-
 }

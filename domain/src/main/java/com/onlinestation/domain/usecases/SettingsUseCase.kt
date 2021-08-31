@@ -2,7 +2,7 @@ package com.onlinestation.domain.usecases
 
 import com.onlinestation.data.datastore.LocalSQLRepository
 import com.onlinestation.domain.interactors.SettingsInteractor
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
+import com.onlinestation.data.entities.OwnerUserBalance
 import kotlinx.coroutines.flow.Flow
 
 class SettingsUseCase(

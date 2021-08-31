@@ -3,23 +3,20 @@ package com.onlinestation.fragment.favorite
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.kmworks.appbase.adapter.BaseAdapter
-import com.kmworks.appbase.adapter.BaseViewHolder
-import com.onlinestation.R
-import com.onlinestation.databinding.ItemGenreBinding
-import com.onlinestation.databinding.ItemStationFavoriteBinding
-import com.onlinestation.entities.localmodels.GenderItem
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.appbase.adapter.BaseAdapter
+import com.onlinestation.appbase.adapter.BaseViewHolder
+import com.onlinestation.databinding.ItemStationBinding
+import com.onlinestation.domain.entities.StationItem
 import com.onlinestation.utils.loadImageCircle
 import com.onlinestation.utils.stationIsFavorite
 
 
-class FavoriteListStationAdapter(val addRemoveStation: (item: StationItem) -> Unit) :
+class FavoriteListStationAdapter(
+    val addRemoveStation: (item: StationItem) -> Unit,
+    var playStation: (stationId: Int) -> Unit
+) :
     BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
         DiffCallback()
     ) {
@@ -29,14 +26,14 @@ class FavoriteListStationAdapter(val addRemoveStation: (item: StationItem) -> Un
         viewType: Int
     ): BaseViewHolder<StationItem, ViewBinding> =
         MyViewHolder(
-            ItemStationFavoriteBinding.inflate(
+            ItemStationBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             )
         )
 
-    private inner class MyViewHolder(private val binding: ItemStationFavoriteBinding) :
+    private inner class MyViewHolder(private val binding: ItemStationBinding) :
         BaseViewHolder<StationItem, ViewBinding>(binding) {
 
         override fun bind(item: StationItem) {
@@ -45,15 +42,18 @@ class FavoriteListStationAdapter(val addRemoveStation: (item: StationItem) -> Un
                 stationLogo.loadImageCircle(item.icon)
                 favorite.stationIsFavorite(item.isFavorite)
                 stationName.text = item.name
+                genreName.text = item.genre
                 favorite.setOnClickListener {
                     addRemoveStation(item)
                 }
             }
-
+        }
+        override fun onItemClick(item: StationItem) {
+            playStation(item.id)
         }
     }
 
-   private class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
+    private class DiffCallback : DiffUtil.ItemCallback<StationItem>() {
         override fun areItemsTheSame(oldItem: StationItem, newItem: StationItem): Boolean =
             oldItem.id == newItem.id
 

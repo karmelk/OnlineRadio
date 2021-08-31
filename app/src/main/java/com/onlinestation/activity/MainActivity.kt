@@ -1,6 +1,7 @@
 package com.onlinestation.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -8,37 +9,35 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.widget.ListView
-import android.widget.PopupWindow
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
+import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
-import com.kmworks.appbase.utils.viewBinding
 import com.onlinestation.R
+import com.onlinestation.appbase.utils.observeInLifecycle
+import com.onlinestation.appbase.utils.viewBinding
 import com.onlinestation.databinding.ActivityMainBinding
-import com.onlinestation.entities.localmodels.GenderItem
+import com.onlinestation.fragment.favorite.FavoriteFragment
 import com.onlinestation.fragment.searchradios.SearchFragment
+import com.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment
+import com.onlinestation.fragment.topstations.TopStationsFragment
 import com.onlinestation.service.MediaBrowserHelper
 import com.onlinestation.service.PlayingRadioLibrary
 import com.onlinestation.service.RadioService
-import com.onlinestation.utils.getCurrentFragment
-import com.onlinestation.utils.hideKeyboard
-import com.onlinestation.utils.textChanges
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.flow.Flow
+import com.onlinestation.utils.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -48,9 +47,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    val mainViewModel: MainViewModel by viewModel()
+    private val mainViewModel: MainViewModel by viewModel()
     private val binding: ActivityMainBinding by viewBinding()
     private val playingRadioLibrary: PlayingRadioLibrary by inject()
+    private val shearViewModel: ShearViewModel by viewModel()
     private lateinit var navHostFragment: NavHostFragment
     lateinit var nav: NavController
     private lateinit var navOptions: NavOptions
@@ -61,73 +61,168 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
         setupView()
         initObserves()
         initData()
-        initClickListener()
+        initClick()
         mMediaBrowserHelper = MediaBrowserConnection(this)
         mMediaBrowserHelper?.registerCallback(MediaBrowserListener())
     }
 
     private fun initObserves() {
+        shearViewModel.favoriteStation.onEach {
+            playingRadioLibrary.getCurrentStation?.let { item ->
+                if (item.id == it.id) {
+                    playingRadioLibrary.updateCurrentPlayedStation(it)
+                    onFavoriteIcon(it.isFavorite)
+                }
+            }
+        }.observeInLifecycle(this@MainActivity)
+
         with(mainViewModel) {
 
-            nextStation.observe(this@MainActivity, Observer {
+            errorNotBalanceLD.onEach {
+                it ?: return@onEach
+                Toast.makeText(
+                    this@MainActivity,
+                    "Your balance is emptya",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }.observeInLifecycle(this@MainActivity)
+
+            nextStation.onEach {
+
                 mMediaBrowserHelper?.getTransportControls()?.skipToNext()
-            })
-            previewStation.observe(this@MainActivity, Observer {
+            }.observeInLifecycle(this@MainActivity)
+
+            previewStation.onEach {
                 mMediaBrowserHelper?.getTransportControls()?.skipToPrevious()
-            })
-            playPause.observe(this@MainActivity, Observer {
+            }.observeInLifecycle(this@MainActivity)
+
+            playPause.onEach {
                 if (mIsPlaying) {
                     mMediaBrowserHelper?.getTransportControls()?.stop()
                 } else {
                     mMediaBrowserHelper?.getTransportControls()?.play()
                 }
-            })
+            }.observeInLifecycle(this@MainActivity)
+
+            playPauseIcon.onEach {
+                binding.steamingStation.gone()
+                if (it) {
+                    binding.playPause.setImageResource(R.drawable.ic_pause_bottom_panel)
+                } else {
+                    binding.playPause.setImageResource(R.drawable.ic_play_bottom_panel)
+                }
+            }.observeInLifecycle(this@MainActivity)
+
+            isFavorite.onEach {
+                onFavoriteIcon(it)
+            }.observeInLifecycle(this@MainActivity)
+
+//            errorNotBalanceLD.observe(this@MainActivity, {
+//                Toast.makeText(
+//                    this@MainActivity,
+//                    "Your balance is empty",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            })
+            getCurrentFragment<SearchFragment>(navHostFragment)?.run {
+//                showEmptyDataContainer.observe(this, {
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "not found data",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                })
+                showEmptyDataContainer.onEach {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "not found data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }.observeInLifecycle(this@MainActivity)
+            }
+
+//            nextStation.observe(this@MainActivity, {
+//                mMediaBrowserHelper?.getTransportControls()?.skipToNext()
+//            })
+//            previewStation.observe(this@MainActivity, {
+//                mMediaBrowserHelper?.getTransportControls()?.skipToPrevious()
+//            })
+//            playPause.observe(this@MainActivity, {
+//                if (mIsPlaying) {
+//                    mMediaBrowserHelper?.getTransportControls()?.stop()
+//                } else {
+//                    mMediaBrowserHelper?.getTransportControls()?.play()
+//                }
+//            })
+//            playPauseIcon.observe(this@MainActivity, {
+//                binding.steamingStation.gone()
+//                if (it) {
+//                    binding.playPause.setImageResource(R.drawable.ic_pause_bottom_panel)
+//                } else {
+//                    binding.playPause.setImageResource(R.drawable.ic_play_bottom_panel)
+//                }
+//            })
+//            isFavorite.observe(this@MainActivity, {
+//                onFavoriteIcon(it)
+//            })
         }
     }
 
-    private fun showSearchView() {
-
-        with(binding) {
-            searchIcon.visibility = GONE
-            appName.visibility = GONE
-            searchContainer.visibility = VISIBLE
-            tabLayout.visibility = GONE
-            editSearch.requestFocus()
-            editSearch.hint = resources.getString(R.string.search)
-            nav.navigate(R.id.navigation_search_radios)
+    private fun onFavoriteIcon(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.favorite.setImageResource(R.drawable.ic_favorite_selected_24dp)
+        } else {
+            binding.favorite.setImageResource(R.drawable.ic_favorite_unselected_24dp)
         }
     }
 
-    private fun initClickListener() {
+    private fun initClick() {
         with(binding) {
-            searchIcon.setOnClickListener {
-                showSearchView()
-            }
-            closeSearch.setOnClickListener {
-                searchContainer.visibility = GONE
-                searchIcon.visibility = VISIBLE
-                appName.visibility = VISIBLE
-                editSearch.text?.clear()
-                tabLayout.visibility = VISIBLE
-                hideKeyboard(window.decorView)
-                nav.navigateUp()
-            }
-
-
-            editSearch.textChanges()
-                .debounce(300)
-                .onEach {
-                    getCurrentFragment<SearchFragment>(navHostFragment)?.run {
-                        it?.apply {
-                            this@run.searchRadio(this.toString())
+            playPause.setOnClickListener { mainViewModel.playPause() }
+            next.setOnClickListener { mainViewModel.skipNextStation() }
+            previous.setOnClickListener { mainViewModel.skipPreviousStation() }
+            favorite.setOnClickListener {
+                getCurrentFragment<SearchFragment>(navHostFragment)?.run {
+                    it?.apply {
+                        playingRadioLibrary.getCurrentStation?.let { item ->
+                            this@run.addRemoveStation(item)
                         }
                     }
-                }.launchIn(lifecycleScope)
-
+                }
+                getCurrentFragment<TopStationsFragment>(navHostFragment)?.run {
+                    it?.apply {
+                        playingRadioLibrary.getCurrentStation?.let { item ->
+                            this@run.addRemoveStation(item)
+                        }
+                    }
+                }
+                getCurrentFragment<StationListByGenreIdFragment>(navHostFragment)?.run {
+                    it?.apply {
+                        playingRadioLibrary.getCurrentStation?.let { item ->
+                            this@run.addRemoveStation(item)
+                        }
+                    }
+                }
+                getCurrentFragment<FavoriteFragment>(navHostFragment)?.run {
+                    it?.apply {
+                        playingRadioLibrary.getCurrentStation?.let { item ->
+                            this@run.addRemoveStation(item)
+                        }
+                    }
+                }
+            }
+            share.setOnClickListener {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+            }
         }
     }
 
@@ -145,17 +240,47 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.initBalance()
     }
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        val searchItem: MenuItem? = menu?.findItem(R.id.action_search)
+        val searchView: SearchView = searchItem?.actionView as SearchView
+        searchView.textChanges()
+            .debounce(300)
+            .onEach {
+                getCurrentFragment<SearchFragment>(navHostFragment)?.run {
+                    it?.apply {
+                        this@run.searchRadio(this.toString())
+                    }
+                }
+            }.launchIn(lifecycleScope)
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                binding.tabLayout.gone()
+                nav.navigate(R.id.navigation_search_radios)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                binding.tabLayout.show()
+                nav.popBackStack()
+                return true
+            }
+        })
+        return super.onCreateOptionsMenu(menu)
+    }
+
     private fun setupView() {
         nav = Navigation.findNavController(this, R.id.navHost)
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
 
         navOptions = NavOptions.Builder()
-            .setLaunchSingleTop(false)
+          //  .setLaunchSingleTop(true)
             .setPopUpTo(nav.graph.startDestination, false)
             .build()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
 
             }
@@ -176,24 +301,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-    override fun onBackPressed() {
-        with(binding) {
-            if (searchContainer.isVisible) {
-                searchContainer.visibility = GONE
-                searchIcon.visibility = VISIBLE
-                appName.visibility = VISIBLE
-                editSearch.text?.clear()
-                tabLayout.visibility = VISIBLE
-                hideKeyboard(window.decorView)
-                tabLayout.touchables?.forEach { it.isEnabled = true }
-            } else {
-                tabLayout.getTabAt(0)?.select()
-            }
-        }
-        super.onBackPressed()
-    }
-
 
     private class MediaBrowserConnection(context: Context) : MediaBrowserHelper(
         context,
@@ -231,15 +338,15 @@ class MainActivity : AppCompatActivity() {
 
             playbackState?.let {
                 if (playbackState.state == PlaybackStateCompat.STATE_PLAYING) {
-                    it.state == PlaybackStateCompat.STATE_PLAYING
+                    // it.state == PlaybackStateCompat.STATE_PLAYING
                     mainViewModel.playPauseIcon.value = true
                     mIsPlaying = true
                 } else {
-                    it.state == PlaybackStateCompat.STATE_STOPPED
+                    //  it.state == PlaybackStateCompat.STATE_STOPPED
                     mainViewModel.playPauseIcon.value = false
                     mIsPlaying = false
                 }
-            } ?: kotlin.run {
+            } ?: run {
                 mainViewModel.playPauseIcon.value = false
                 mIsPlaying = false
             }
@@ -249,6 +356,7 @@ class MainActivity : AppCompatActivity() {
             if (mediaMetadata == null) {
                 return
             }
+            binding.steamingStation.show()
             val mediaId = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
             mainViewModel.checkStationInDB(mediaId.toInt())
             val url = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)
@@ -262,7 +370,7 @@ class MainActivity : AppCompatActivity() {
                         R.drawable.ic_default_station
                     )
                 )
-                .into(stationIcon)
+                .into(binding.stationIcon)
         }
 
         override fun onSessionDestroyed() {

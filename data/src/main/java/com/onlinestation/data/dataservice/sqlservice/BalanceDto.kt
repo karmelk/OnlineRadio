@@ -1,11 +1,10 @@
 package com.onlinestation.data.dataservice.sqlservice
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
+import com.onlinestation.data.entities.OwnerUserBalance
 
 @Dao
 interface BalanceDto {

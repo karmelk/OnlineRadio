@@ -3,66 +3,77 @@ package com.onlinestation.fragment.stationsbygenderId.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kmworks.appbase.utils.Constants
-import com.kmworks.appbase.viewmodel.BaseViewModel
-import com.onlinestation.domain.interactors.SqlRoomInteractor
+import com.onlinestation.appbase.viewmodel.BaseViewModel
+import com.onlinestation.data.entities.Constants.Companion.errorNotBalanceCode
+import com.onlinestation.data.entities.Constants.Companion.notFountIndexExaction
+import com.onlinestation.domain.interactors.AddStationDBInteractor
 import com.onlinestation.domain.interactors.StationListByGenreIdInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.domain.entities.StationItem
 import kotlinx.coroutines.launch
+import com.onlinestation.data.entities.Result
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class StationListByGenreIdViewModel(
     private val stationListByGenreIdInteractor: StationListByGenreIdInteractor,
-    private val sqlRoomInteractor: SqlRoomInteractor
+    private val addStationDBInteractor: AddStationDBInteractor
 ) : BaseViewModel() {
 
-    private val _errorNotBalanceLD by lazy { MutableLiveData<Unit>() }
-    val errorNotBalanceLD get() = _errorNotBalanceLD
-    private val _getStationsListLD by lazy { MutableLiveData<List<StationItem>>() }
-    val getStationsListLD: LiveData<List<StationItem>> get() = _getStationsListLD
-    private val _errorAddStationLD by lazy { MutableLiveData<Unit>() }
-    val errorAddStationLD get() = _errorAddStationLD
-    private val _errorStationsListLD by lazy { MutableLiveData<Unit>() }
-    val errorStationsListLD: LiveData<Unit> get() = _errorStationsListLD
+    private val _errorNotBalance: MutableStateFlow<Unit?> by lazy { MutableStateFlow(null) }
+    val errorNotBalance = _errorNotBalance.asStateFlow()
+
+    private val _getStationsList: MutableStateFlow<List<StationItem>?> by lazy { MutableStateFlow(null) }
+    val getStationsList = _getStationsList.asStateFlow()
+
+    private val _errorLoadStations: MutableStateFlow<Unit?> by lazy { MutableStateFlow(null) }
+    val errorLoadStations = _errorLoadStations.asStateFlow()
+
+    private val _errorAddStation: MutableStateFlow<Unit?> by lazy { MutableStateFlow(null) }
+    val errorAddStation = _errorAddStation.asStateFlow()
 
     fun getStationsByGenreIdList(genreId: Long) {
         viewModelScope.launch(Dispatchers.Default) {
-            when (val userData =
-                stationListByGenreIdInteractor.getStationListByGenreIdData(genreId)) {
+            when (val result =
+                stationListByGenreIdInteractor(genreId)) {
                 is Result.Success -> withContext(Dispatchers.Main) {
-                    _getStationsListLD.value = userData.data
-
+                    _getStationsList.value = result.data
+                    if (result.data.isNullOrEmpty()) {
+                        showEmptyData()
+                    }
                 }
                 is Result.Error -> withContext(Dispatchers.Main) {
-                    _errorStationsListLD.value = Unit
+                    _errorLoadStations.value = Unit
                 }
             }
         }
     }
 
-    fun addRemoveStationLocalDB(item: StationItem) {
-        viewModelScope.launch(Dispatchers.Main) {
-            when (val data =
-                sqlRoomInteractor.addRemoveStationFromDB(item, _getStationsListLD.value)) {
+    fun addRemoveStationItem(item: StationItem) {
+        viewModelScope.launch {
+            when (val result =
+                addStationDBInteractor(item, _getStationsList.value)) {
                 is Result.Success -> {
-                    _getStationsListLD.value = data.data
+                    _getStationsList.value = result.data?.first
+                    addedOrRemovedIsFavorite(result.data?.second)
+                    if (result.data?.first.isNullOrEmpty()) {
+                        showEmptyData()
+                    }
                 }
                 is Result.Error -> {
-                    when (data.errors.errorCode) {
-                        Constants.errorNotBalanceCode -> {
-                            _errorNotBalanceLD.value = Unit
+                    when (result.errors.errorCode) {
+                        errorNotBalanceCode -> {
+                            _errorNotBalance.value = Unit
                         }
-                        Constants.notFountIndexExaction -> {
-                            _errorAddStationLD.value = Unit
+                        notFountIndexExaction -> {
+                            _errorAddStation.value = Unit
                         }
                     }
                 }
             }
         }
     }
-
 
 }
 

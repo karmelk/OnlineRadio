@@ -9,20 +9,15 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import com.onlinestation.utils.parseM3UToString
 import kotlinx.coroutines.*
-import saschpe.exoplayer2.ext.icy.IcyHttpDataSourceFactory
+
 
 class MediaPlayerAdapter(
-    private val radioLibrary: PlayingRadioLibrary,
     private val context: Context,
     private val mPlaybackInfoListener: PlaybackInfoListener
 ) {
@@ -33,11 +28,7 @@ class MediaPlayerAdapter(
     private var mSeekWhileNotPlaying = -1
 
     private fun initExoPlayer() {
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(
-            context, DefaultRenderersFactory(context), DefaultTrackSelector(),
-            DefaultLoadControl()
-        )
-
+        exoPlayer = SimpleExoPlayer.Builder(context).build()
     }
 
     fun playFromMedia(metadata: MediaMetadataCompat?) {
@@ -46,7 +37,7 @@ class MediaPlayerAdapter(
         initExoPlayer()
         val stationUrl = metadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)
         stationUrl?.let {
-            GlobalScope.launch(Dispatchers.Default) { // CoroutineScope
+            GlobalScope.launch(Dispatchers.IO) { // CoroutineScope
                 loadRadio(it)
             }
         }
@@ -64,7 +55,6 @@ class MediaPlayerAdapter(
     }
 
     fun isPlaying(): Boolean {
-        // return mMediaPlayer != null && mMediaPlayer!!.isPlaying
         return exoPlayer?.isPlayingAd!!
     }
 
@@ -133,84 +123,45 @@ class MediaPlayerAdapter(
         return actions
     }
 
+    private suspend fun loadRadio(urlString: String) {
+        val url = parseM3UToString(urlString, "m3u")
+        //  val url: String = "http://uk5.internet-radio.com:8174/"
 
-    private fun loadRadio(urlString: String) {
-        val mp = "https://www.internet-radio.com/servers/tools/playlistgenerator/?u=http://uk6.internet-radio.com:8179/listen.pls&t=.m3u"
-        var url: String? = parseM3UToString(mp, "m3u")
-        if(url==null){
-            url="http://yp.shoutcast.com/sbin/tunein-station.m3u?id=99473570"
-        }
-        val mediaSource = extractMediaSourceFromUri(Uri.parse(url))
+        val mediaItem: MediaItem = MediaItem.fromUri(url)
+        withContext(Dispatchers.Main) {
+            exoPlayer?.stop()
+            exoPlayer?.apply {
+                // AudioAttributes here from exoplayer package !!!
+                val attr = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .build()
+                // In 2.9.X you don't need to manually handle audio focus :D
 
-//https://s2.ssl-stream.com:8190/radio.mp3
-        exoPlayer?.stop()
-        exoPlayer?.apply {
-            // AudioAttributes here from exoplayer package !!!
-            val attr = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MUSIC)
-                .build()
-            // In 2.9.X you don't need to manually handle audio focus :D
-            setAudioAttributes(attr, true)
-            prepare(mediaSource)
-            // THAT IS ALL YOU NEED
-            playWhenReady = true
-            addListener(eventListener)
-        }
-    }
-
-    private fun extractMediaSourceFromUri(uri: Uri): MediaSource {
-        val userAgent = Util.getUserAgent(context, "Exo")
-        return ExtractorMediaSource.Factory(DefaultDataSourceFactory(context, userAgent))
-            .setExtractorsFactory(DefaultExtractorsFactory()).createMediaSource(uri)
-    }
-
-    fun test(uri: Uri): ExtractorMediaSource {
-        // ... exoPlayer instance already created
-
-// Custom HTTP data source factory which requests Icy metadata and parses it if
-// the stream server supports it
-        val icyHttpDataSourceFactory = IcyHttpDataSourceFactory.Builder("Exo")
-            .setIcyHeadersListener { icyHeaders ->
-                Log.d("XXX", "onIcyHeaders: %s".format(icyHeaders.toString()))
+                setAudioAttributes(attr, true)
+                setMediaItem(mediaItem)
+                prepare()
+                play()
+                playWhenReady = true
+                addListener(eventListener)
             }
-            .setIcyMetadataChangeListener { icyMetadata ->
-                Log.d("XXX", "onIcyMetaData: %s".format(icyMetadata.toString()))
-            }
-            .build()
-
-// Produces DataSource instances through which media data is loaded
-        val dataSourceFactory = DefaultDataSourceFactory(context, null, icyHttpDataSourceFactory)
-
-// The MediaSource represents the media to be played
-        val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
-            .setExtractorsFactory(DefaultExtractorsFactory())
-            .createMediaSource(uri)
-
-        return mediaSource
+        }
     }
 
-    private val eventListener: Player.EventListener = object : Player.EventListener {
+    private val eventListener: Player.Listener = object : Player.Listener {
 
         override fun onPlayerStateChanged(
             playWhenReady: Boolean,
             playbackState: Int
         ) {
             setNewState(PlaybackStateCompat.STATE_PLAYING)
-            //  Toast.makeText(context, "$playbackState+ $playWhenReady", Toast.LENGTH_SHORT).show()
+             // Toast.makeText(context, "$playbackState+ $playWhenReady", Toast.LENGTH_SHORT).show()
         }
 
         override fun onPlayerError(error: ExoPlaybackException) {
-            Log.i("MessageExo", "" + error.message)
             onStop()
             Toast.makeText(context, "${error.message}", Toast.LENGTH_SHORT).show()
             super.onPlayerError(error)
         }
 
-        override fun onTracksChanged(
-            trackGroups: TrackGroupArray,
-            trackSelections: TrackSelectionArray
-        ) {
-            super.onTracksChanged(trackGroups, trackSelections)
-        }
     }
 }

@@ -24,6 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.CheckResult
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.ImageViewCompat
@@ -57,18 +58,25 @@ fun <T> debounce(
 
 @ExperimentalCoroutinesApi
 @CheckResult
-fun EditText.textChanges(): Flow<CharSequence?> {
+fun SearchView.textChanges(): Flow<CharSequence?> {
     return callbackFlow<CharSequence?> {
-        val listener = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                offer(s)
+        val listener = object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                offer(query)
+               return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                offer(newText)
+                return true
             }
         }
-        addTextChangedListener(listener)
-        awaitClose { removeTextChangedListener(listener) }
-    }.onStart { emit(text) }
+        setOnQueryTextListener(listener)
+     //   addTextChangedListener(listener)
+      //  awaitClose { removeTextChangedListener(listener) }
+        awaitClose {  }
+    }.onStart { emit(query) }
 }
 
 inline fun <reified T : View> Fragment.find(id: Int): T = view?.findViewById(id) as T
@@ -178,9 +186,7 @@ fun Activity.hideKeyboard(viewToHide: View?) {
 }
 
 
-fun View.show(alphaValue: Float? = null) {
-    if (alphaValue != null) alpha = alphaValue
-
+fun View.show() {
     if (visibility != View.VISIBLE) {
         visibility = View.VISIBLE
     }

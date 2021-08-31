@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
-import com.kmworks.appbase.adapter.BaseAdapter
-import com.kmworks.appbase.adapter.BaseViewHolder
+import com.onlinestation.appbase.adapter.BaseAdapter
+import com.onlinestation.appbase.adapter.BaseViewHolder
 import com.onlinestation.databinding.ItemStationBinding
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.domain.entities.StationItem
 import com.onlinestation.utils.loadImageCircle
 import com.onlinestation.utils.stationIsFavorite
 
@@ -41,6 +41,10 @@ class SearchStationAdapter(
                     addRemoveStation(item)
                 }
             }
+
+        }
+        override fun onItemClick(item: StationItem) {
+            playStation(item.id)
         }
     }
 

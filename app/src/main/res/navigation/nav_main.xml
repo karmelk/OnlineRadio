@@ -13,7 +13,14 @@
 
         <action
             android:id="@+id/action_navigation_home_to_navigation_stations_by_genre_id"
-            app:destination="@id/navigation_stations_by_genre_id" />
+            app:destination="@id/navigation_stations_by_genre_id"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="false">
+
+        </action>
+        <argument
+            android:name="gender_id"
+            app:argType="long" />
     </fragment>
 
     <fragment

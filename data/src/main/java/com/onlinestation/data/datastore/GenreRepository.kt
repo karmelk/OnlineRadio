@@ -1,15 +1,12 @@
 package com.onlinestation.data.datastore
 
-import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
-import  com.onlinestation.entities.Result
-import com.onlinestation.entities.localmodels.QueryGenreBody
-import com.onlinestation.entities.responcemodels.gendermodels.server.ResponseGender
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
+import com.onlinestation.data.entities.gendermodels.ResponseGender
+import com.onlinestation.data.entities.request.QueryGenreBody
+import com.onlinestation.data.entities.stationmodels.StationItemDb
+import com.onlinestation.data.entities.Result
 
 interface GenreRepository {
     suspend fun getGenreListData(queryBody: QueryGenreBody): Result<List<ResponseGender>>
-    suspend fun saveGenreDB(genderDatumDbs: List<GenderItemDb>)
-    suspend fun getPrimaryGenreDataDB(): List<GenderItemDb>?
     suspend fun checkStationInDB(itemId: Int) : StationItemDb?
 
 }

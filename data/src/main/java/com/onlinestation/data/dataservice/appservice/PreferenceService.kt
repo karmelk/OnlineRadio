@@ -1,6 +1,6 @@
-package com.onlinestation.data.dataservices.appservice
+package com.onlinestation.data.dataservice.appservice
 
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
+import com.onlinestation.data.entities.OwnerUserBalance
 
 
 interface PreferenceService {

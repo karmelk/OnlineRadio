@@ -1,18 +1,10 @@
 package com.onlinestation.fragment.settings
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.kmworks.appbase.FragmentBaseMVVM
-import com.kmworks.appbase.utils.Constants
-import com.kmworks.appbase.utils.viewBinding
-import com.onlinestation.activity.MainActivity
-import com.onlinestation.databinding.FragmentFavoriteBinding
+import com.onlinestation.appbase.FragmentBaseMVVM
+import com.onlinestation.appbase.utils.viewBinding
+import com.onlinestation.data.entities.Constants.Companion.defaultUserBalanceCount
+import com.onlinestation.data.entities.Constants.Companion.defaultUserID
 import com.onlinestation.databinding.FragmentSettingsBinding
-import com.onlinestation.fragment.favorite.FavoriteListStationAdapter
-import com.onlinestation.fragment.favorite.viewmodel.FavoriteViewModel
 import com.onlinestation.fragment.settings.viewmodel.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,17 +18,14 @@ class SettingsFragment : FragmentBaseMVVM<SettingsViewModel, FragmentSettingsBin
 
     override fun onViewClick() {
         binding.addCoinContainer.setOnClickListener {
-            viewModel.updateBalance(Constants.defaultUserID, Constants.defaultUserBalanceCount)
-        }
-    }
-    override fun observes() {
-        observe(viewModel.balanceCountDataLD) {
-            binding.userBalance.text = it?.balance.toString()
+            viewModel.updateBalance(defaultUserID, defaultUserBalanceCount)
         }
     }
 
-    override fun navigateUp() {
-        navigateBackStack()
+    override fun onEach() {
+        onEach(viewModel.balanceCountDataLD) {
+            binding.userBalance.text = it?.balance.toString()
+        }
     }
 
 

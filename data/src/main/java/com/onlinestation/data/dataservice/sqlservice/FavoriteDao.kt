@@ -1,7 +1,7 @@
 package com.onlinestation.data.dataservice.sqlservice
 
 import androidx.room.*
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
+import com.onlinestation.data.entities.stationmodels.StationItemDb
 
 @Dao
 interface FavoriteDao {

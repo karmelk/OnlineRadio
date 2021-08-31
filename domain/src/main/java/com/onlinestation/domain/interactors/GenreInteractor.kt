@@ -1,9 +1,8 @@
 package com.onlinestation.domain.interactors
 
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.localmodels.GenderItem
+import com.onlinestation.data.entities.request.GenderItem
+import com.onlinestation.data.entities.Result
 
 interface GenreInteractor {
-    suspend fun getGenreListData(): Result<List<GenderItem>>
-
+    suspend operator fun invoke(): Result<List<GenderItem>>
 }

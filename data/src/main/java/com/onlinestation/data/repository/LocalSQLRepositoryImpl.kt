@@ -4,14 +4,13 @@ import com.onlinestation.data.dataservice.sqlservice.BalanceDto
 import com.onlinestation.data.dataservice.sqlservice.FavoriteDao
 import com.onlinestation.data.dataservice.sqlservice.GenreDto
 import com.onlinestation.data.datastore.LocalSQLRepository
-import com.onlinestation.entities.responcemodels.OwnerUserBalance
-import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
-import kotlinx.coroutines.channels.SendChannel
+import com.onlinestation.data.entities.OwnerUserBalance
+import com.onlinestation.data.entities.gendermodels.GenderItemDb
+import com.onlinestation.data.entities.stationmodels.StationItemDb
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
 
-class LocalSQLRepositoryImpl(
+internal class LocalSQLRepositoryImpl(
     private val stationDao: FavoriteDao,
     private val balanceDto: BalanceDto,
     private val genreDto: GenreDto
@@ -24,7 +23,7 @@ class LocalSQLRepositoryImpl(
         genreDto.saveGenre(itemDb)
     }
 
-    override suspend fun getGenreListDB(): MutableList<GenderItemDb>? = genreDto.getGenreList()
+    override suspend fun getGenreListDB(): List<GenderItemDb>? = genreDto.getGenreList()
 
     override suspend fun removeStationDB(itemId: Int) {
         stationDao.deleteStationById(itemId)

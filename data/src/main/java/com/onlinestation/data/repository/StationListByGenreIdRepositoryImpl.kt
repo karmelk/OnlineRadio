@@ -1,19 +1,19 @@
 package com.onlinestation.data.repository
 
-import com.onlinestation.data.dataservice.apiservice.OwnerServerApiService
+import com.onlinestation.data.dataservice.apiservice.AllApiService
 import com.onlinestation.data.datastore.StationListByGenreIdRepository
 import com.onlinestation.data.util.analyzeResponse
 import com.onlinestation.data.util.makeApiCall
-import com.onlinestation.entities.Result
-import com.onlinestation.entities.localmodels.QueryStationByGenderBody
-import com.onlinestation.entities.responcemodels.ParentResponse
+import com.onlinestation.data.entities.ParentResponse
+import com.onlinestation.data.entities.request.QueryStationByGenderBody
+import com.onlinestation.data.entities.Result
 
-
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
+import com.onlinestation.data.entities.stationmodels.StationItemResponse
 import retrofit2.Response
 
-class StationListByGenreIdRepositoryImpl(private val allApiService: OwnerServerApiService) :
+internal class StationListByGenreIdRepositoryImpl(private val allApiService: AllApiService) :
     StationListByGenreIdRepository {
+
     override suspend fun getStationListData(queryBody: QueryStationByGenderBody): Result<List<StationItemResponse>> =
         makeApiCall({
             getStationListGenreIdData(
@@ -30,5 +30,4 @@ class StationListByGenreIdRepositoryImpl(private val allApiService: OwnerServerA
 
     private fun getStationListGenreIdData(response: Response<ParentResponse<StationItemResponse>>): Result<List<StationItemResponse>> =
         analyzeResponse(response)
-
 }

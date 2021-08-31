@@ -36,7 +36,6 @@ class RadioService : MediaBrowserServiceCompat() {
         // Create a new MediaSession.
         mSession = MediaSessionCompat(this, "RadioService")
 
-
         mSession.setCallback(MediaSessionCallback())
         mSession.setFlags(
             MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
@@ -47,7 +46,6 @@ class RadioService : MediaBrowserServiceCompat() {
         mMediaNotificationManager =
             MediaNotificationManager(this)
         mPlayback = MediaPlayerAdapter(
-            playingRadioLibrary,
             this,
             MediaPlayerListener()
         )
@@ -70,7 +68,7 @@ class RadioService : MediaBrowserServiceCompat() {
         clientPackageName: String,
         clientUid: Int,
         rootHints: Bundle?
-    ): BrowserRoot? {
+    ): BrowserRoot {
 
         // Clients can connect, but this BrowserRoot is an empty hierachy
         // so onLoadChildren returns nothing. This disables the ability to browse for content.

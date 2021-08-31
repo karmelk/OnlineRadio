@@ -5,21 +5,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
-import com.kmworks.appbase.adapter.BaseAdapter
-import com.kmworks.appbase.adapter.BaseViewHolder
+import com.onlinestation.appbase.adapter.BaseAdapter
+import com.onlinestation.appbase.adapter.BaseViewHolder
 import com.onlinestation.databinding.ItemStationBinding
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.domain.entities.StationItem
 import com.onlinestation.utils.loadImageCircle
 import com.onlinestation.utils.stationIsFavorite
 
-class TopStationAdapter(
+internal class TopStationAdapter(
     var addRemoveStation: (item: StationItem) -> Unit,
     var playStation: (stationId: Int) -> Unit
-) :   BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
+) : BaseAdapter<ViewBinding, StationItem, BaseViewHolder<StationItem, ViewBinding>>(
     DiffCallback()
 ) {
 
-    @Suppress("UNCHECKED_CAST")
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -38,10 +37,15 @@ class TopStationAdapter(
                 stationLogo.loadImageCircle(item.icon)
                 favorite.stationIsFavorite(item.isFavorite)
                 stationName.text = item.name
+                genreName.text = item.genre
                 favorite.setOnClickListener {
                     addRemoveStation(item)
                 }
             }
+        }
+
+        override fun onItemClick(item: StationItem) {
+            playStation(item.id)
         }
     }
 

@@ -1,21 +1,16 @@
 package com.onlinestation.service
 
 import android.support.v4.media.MediaMetadataCompat
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
+import com.onlinestation.domain.entities.StationItem
 
 class PlayingRadioLibrary {
-    private val stationList: MutableList<StationItem> = mutableListOf()
+    private var stationList: MutableList<StationItem> = mutableListOf()
     private var currentItemIndex = 0
     private var currentStationFragmentName: String = ""
 
-    fun setStations(stations: List<StationItem>) {
-        stationList.clear()
-        stationList.addAll(stations)
-    }
-
     fun updateLibraryStation(stations: List<StationItem>, fragmentName: String) {
         if (currentStationFragmentName != fragmentName) {
-            currentStationFragmentName=fragmentName
+            currentStationFragmentName = fragmentName
             stationList.clear()
             stationList.addAll(stations)
         }
@@ -53,6 +48,7 @@ class PlayingRadioLibrary {
     private val currentStation: StationItem
         get() = stationList[currentItemIndex]
 
+    val getCurrentStation: StationItem? get() = if(stationList.isNotEmpty()) stationList[currentItemIndex] else null
 
     fun getMetadata(
         mediaId: String
@@ -92,5 +88,14 @@ class PlayingRadioLibrary {
         return builder.build()
     }
 
+    fun updateCurrentPlayedStation(item: StationItem) {
+        val listItem = stationList.find { it.id == item.id } ?: return
+        val index = stationList.indexOf(listItem)
+        if (index != -1) {
+            stationList = stationList.apply {
+                this[index] = item
+            }
+        }
+    }
 
 }

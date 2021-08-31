@@ -1,21 +1,22 @@
 package com.onlinestation.domain.utils
 
-import com.kmworks.appbase.utils.Constants.Companion.BASE_OWNER_SERVER_API_URL
-import com.kmworks.appbase.utils.Constants.Companion.FOLDER_GENRES
-import com.kmworks.appbase.utils.Constants.Companion.FOLDER_RADIOS
-import com.onlinestation.entities.localmodels.GenderItem
-import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
-import com.onlinestation.entities.responcemodels.gendermodels.server.ResponseGender
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItem
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemDb
-import com.onlinestation.entities.responcemodels.stationmodels.server.StationItemResponse
+import com.onlinestation.data.entities.Constants.Companion.BASE_API_URL
+import com.onlinestation.data.entities.Constants.Companion.FOLDER_GENRES
+import com.onlinestation.data.entities.Constants.Companion.FOLDER_RADIOS
+import com.onlinestation.data.entities.request.GenderItem
+import com.onlinestation.data.entities.gendermodels.GenderItemDb
+import com.onlinestation.data.entities.gendermodels.ResponseGender
+import com.onlinestation.domain.entities.StationItem
+import com.onlinestation.data.entities.stationmodels.StationItemDb
+import com.onlinestation.data.entities.stationmodels.StationItemResponse
 
-fun StationItemDb.fromDBStationToStation(
+fun StationItemDb.toDomain(
     isFavorite: Boolean
 ) = StationItem(
     id = id,
     name = name,
     icon = icon,
+    genre = genre,
     stationUrl = stationUrl,
     isFavorite = isFavorite
 )
@@ -24,35 +25,25 @@ fun StationItem.fromStationToStationDB() = StationItemDb(
     id = id,
     name = name,
     icon = icon,
+    genre = genre,
     stationUrl = stationUrl
 )
 
-fun StationItemResponse.fromDBStationToStation(
+fun StationItemResponse.toDomain(
     isFavorite: Boolean
 ) = StationItem(
-    id = id,
-    name = name,
-    icon = BASE_OWNER_SERVER_API_URL + FOLDER_RADIOS + img,
-    stationUrl = stationUrl,
+    id = id?:0,
+    name = name?:"",
+    icon = BASE_API_URL + FOLDER_RADIOS + img,
+    genre = genre?:"",
+    stationUrl = stationUrl?:"",
     isFavorite = isFavorite
 )
 
-fun ResponseGender.toGenreItem() = GenderItem(
+fun ResponseGender.toDomain() = GenderItem(
     name = name,
     id = id,
-    img = BASE_OWNER_SERVER_API_URL + FOLDER_GENRES + img
-)
-
-fun GenderItemDb.fromGenreItemDbToGenreItem() = GenderItem(
-    name = name,
-    id = id,
-    img = img
-)
-
-fun ResponseGender.toGenreItemDb() = GenderItemDb(
-    name = name,
-    id = id,
-    img = img
+    img = BASE_API_URL + FOLDER_GENRES + img
 )
 
 

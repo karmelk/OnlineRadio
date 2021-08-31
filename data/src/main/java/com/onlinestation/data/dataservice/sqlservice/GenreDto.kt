@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.onlinestation.entities.responcemodels.gendermodels.server.GenderItemDb
+import com.onlinestation.data.entities.gendermodels.GenderItemDb
 
 @Dao
 interface GenreDto {
@@ -15,5 +15,5 @@ interface GenreDto {
     fun clearGenre()
 
     @Query("SELECT * FROM genre")
-    fun getGenreList(): MutableList<GenderItemDb>?
+    fun getGenreList(): List<GenderItemDb>?
 }
