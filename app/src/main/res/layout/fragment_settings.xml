@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
 
-        <import type="com.onlinestation.entities.responcemodels.OwnerUserBalance" />
-        <import type="com.kmworks.appbase.Constants" />
-        <variable
-            name="viewModel"
-            type="com.onlinestation.fragment.settings.viewmodel.SettingsViewModel" />
-    </data>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".fragment.settings.SettingsFragment">
@@ -63,9 +57,9 @@
             android:layout_marginTop="@dimen/dp_15"
             android:layout_marginEnd="@dimen/dp_10"
             android:gravity="center_vertical"
-            android:text="@{String.valueOf(viewModel.balanceCountDataLD.balance)}"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/sp_17"
+            android:text="0"
             app:layout_constraintBottom_toBottomOf="@+id/addCoinContainer"
             app:layout_constraintEnd_toStartOf="@+id/addCoinContainer"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +72,6 @@
             android:layout_marginTop="@dimen/dp_15"
             android:layout_marginEnd="@dimen/dp_15"
             android:background="@drawable/border_get_coins_button"
-            android:onClick="@{() -> viewModel.updateBalance(Constants.defaultUserID,Constants.defaultUserBalanceCount)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/coinDesc">
 
@@ -156,5 +149,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
 

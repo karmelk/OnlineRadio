@@ -1,66 +1,73 @@
 ext {
 
-//Version
-    compileVersion = 30
-    buildVersion = "30.0.1"
-    minVersion = 21
-    targetVersion = 29
-    appVersionCode = 1
-    appVersionName = "1.0.0"
-    supportLibrary = '22.2.1'
-    kotlinVersion = '1.4.10'
-    koinVersion = '2.0.1'
-    retrofitVersion = '2.7.1'
-    moshiConverterVersion = '2.7.1'
-    loggingVersion = '4.3.1'
-    appcompat = '1.2.0'
-    coreKtx = '1.3.2'
-    constraintlayout = '2.0.2'
-    materialVersion = '1.2.1'
-    junitAndroid = '1.1.2'
-    junit = '4.13.1'
-    espressoCore = '3.3.0'
-    koinAndroidVesion = '2.0.1'
-    coroutinesVersion = '1.3.3'
-    fragmentVersion = '1.2.0'
-    navigationVersion = '2.2.1'
-    roomVersion = '2.2.2'
-    roomVersion = '2.2.2'
-    versionCardView = '1.0.0'
-    glideVersion = '4.9.0'
-
-    legacySupportVersion = '1.0.0'
-    exoplayerVersion = '2.9.4'
-
-//Support Libraries dependencies
-    supportDependencies = [
-            appcompat         : "androidx.appcompat:appcompat:${appcompat}",
-            kotlin            : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
-            coreKtx           : "androidx.core:core-ktx:${coreKtx}",
-            constraintlayout  : "androidx.constraintlayout:constraintlayout:${constraintlayout}",
-            material          : "com.google.android.material:material:${materialVersion}",
-            junitAndroid      : "androidx.test.ext:junit:${junitAndroid}",
-            junit             : "junit:junit:${junit}",
-            espressoCore      : "androidx.test.espresso:espresso-core:${espressoCore}",
-            retrofit          : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
-            moshiConverter    : "com.squareup.retrofit2:converter-moshi:${moshiConverterVersion}",
-            loggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${loggingVersion}",
-            koinAndroid       : "org.koin:koin-android:${koinAndroidVesion}",
-            koinViewModel     : "org.koin:koin-androidx-viewmodel:${koinAndroidVesion}",
-            coroutines        : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}",
-            coroutinesAndroid : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}",
-            navigationFragment: "androidx.navigation:navigation-fragment-ktx:${navigationVersion}",
-            navigationUi      : "androidx.navigation:navigation-ui-ktx:${navigationVersion}",
-            fragmentVersion   : "androidx.fragment:fragment-ktx:${fragmentVersion}",
-            roomRuntime       : "androidx.room:room-runtime:${roomVersion}",
-            roomCompiler      : "androidx.room:room-compiler:${roomVersion}",
-            cardView          : "androidx.cardview:cardview:${versionCardView}",
-            glide             : "com.github.bumptech.glide:glide:${glideVersion}",
-            glideOkHttp3      : "com.github.bumptech.glide:okhttp3-integration:${glideVersion}",
-            glideCompiler     : "com.github.bumptech.glide:compiler:${glideVersion}",
-            legacySupport     : "androidx.legacy:legacy-support-v4:${legacySupportVersion}",
-            exoplayer         : "com.google.android.exoplayer:exoplayer:${exoplayerVersion}",
-
+    app = [
+            "id"            : "com.onlineradio",
+            "minVersion"    : 21,
+            "compileVersion": 31,
+            "targetSdk"     : 31,
+            "versionCode"   : 1,
+            "versionName"   : "0.0.1",
     ]
 
+    versions = [
+            "kotlin"                    : "1.5.31",
+            "gradleBuildTools"          : "7.0.4",
+
+            "material"                  : "1.3.0",
+            "okHttp3"                   : "4.9.0",
+            "glideVersion"              : "4.12.0",
+            "androidxCoreKtx"           : "1.3.2",
+            "appcompat"                 : '1.3.0',
+            "androidxConstraintLayout"  : "2.0.4",
+            "androidxlifecycle"         : "2.3.0",
+            "androidxFragment"          : "1.2.2",
+            "androidxNavigation"        : "2.3.5",
+            "androidxRecyclerView"      : "1.2.0",
+            "androidxSwiperefreshlayout": "1.1.0",
+            "androidxRoomVersion"       : "2.2.2",
+            "androidxJunitAndroid"      : "1.1.1",
+
+            "koin"                      : "3.1.2",
+            "retrofitVersion"           : '2.7.1',
+            "moshiConverterVersion"     : '2.7.1',
+            "loggingVersion"            : '4.3.1',
+            "exoplayerVersion"          : '2.14.1',
+            "versionCardView"           : '28.0.0',
+            "coroutinesVersion"         : '1.3.9',
+    ]
+
+    classpaths = [
+            "gradleBuildTools"  : "com.android.tools.build:gradle:$versions.gradleBuildTools",
+            "kotlinGradlePlugin": "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+            "navigationSafeArgs": "androidx.navigation:navigation-safe-args-gradle-plugin:$versions.androidxNavigation"
+    ]
+
+    libraries = [
+            "kotlinStdLib"      : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin",
+            "coroutines"        : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesVersion",
+            "material"          : "com.google.android.material:material:$versions.material",
+            "glide"             : "com.github.bumptech.glide:glide:$versions.glideVersion",
+            "glideCompiler"     : "com.github.bumptech.glide:compiler:$versions.glideVersion",
+            "koinAndroid"       : "io.insert-koin:koin-android:$versions.koin",
+            "retrofit"          : "com.squareup.retrofit2:retrofit:$versions.retrofitVersion",
+            "moshiConverter"    : "com.squareup.retrofit2:converter-moshi:$versions.moshiConverterVersion",
+            "loggingInterceptor": "com.squareup.okhttp3:logging-interceptor:$versions.loggingVersion",
+            "exoplayer"         : "com.google.android.exoplayer:exoplayer:$versions.exoplayerVersion",
+            "cardView"          : "com.android.support:cardview-v7:$versions.versionCardView",
+    ]
+
+    androidXLibraries = [
+            "coreKtx"              : "androidx.core:core-ktx:$versions.androidxCoreKtx",
+            "appCompat"            : "androidx.appcompat:appcompat:$versions.appcompat",
+            "constraintLayout"     : "androidx.constraintlayout:constraintlayout:$versions.androidxConstraintLayout",
+            "lifecycleCommon"      : "androidx.lifecycle:lifecycle-common-java8:$versions.androidxlifecycle",
+            "fragmentKtx"          : "androidx.fragment:fragment-ktx:$versions.androidxFragment",
+            "navigationFragmentKtx": "androidx.navigation:navigation-fragment-ktx:$versions.androidxNavigation",
+            "navigationUiKtx"      : "androidx.navigation:navigation-ui-ktx:$versions.androidxNavigation",
+            "recyclerView"         : "androidx.recyclerview:recyclerview:$versions.androidxRecyclerView",
+            "swiperefresh"         : "androidx.swiperefreshlayout:swiperefreshlayout:$versions.androidxSwiperefreshlayout",
+            "roomRuntime"          : "androidx.room:room-runtime:$versions.androidxRoomVersion",
+            "roomCompiler"         : "androidx.room:room-compiler:$versions.androidxRoomVersion",
+            "junitAndroid"         : "androidx.test.ext:junit:$versions.androidxJunitAndroid"
+    ]
 }

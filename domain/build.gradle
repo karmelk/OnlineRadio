@@ -1,48 +1,29 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.library")
+    id("kotlin-kapt")
+}
 
 android {
-    compileSdkVersion compileVersion
-    buildToolsVersion buildVersion
-
-    defaultConfig {
-        minSdkVersion minVersion
-        targetSdkVersion targetVersion
-        versionCode appVersionCode
-        versionName appVersionName
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    flavorDimensions "named"
+    productFlavors{
+        dev{
+            dimension ="named"
         }
-    }
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        prod{
+            dimension ="named"
+        }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':entities')
-    implementation project(path: ':data')
-    implementation project(path: ':appbase')
-    implementation supportDependencies.kotlin
-    implementation supportDependencies.appcompat
-    implementation supportDependencies.coreKtx
-    implementation supportDependencies.koinAndroid
-    implementation supportDependencies.coroutines
-    testImplementation supportDependencies.junit
-    androidTestImplementation  supportDependencies.junitAndroid
-    androidTestImplementation supportDependencies.espressoCore
-    implementation supportDependencies.legacySupport
 
+    implementation project(path: ':data')
+    implementation libraries.kotlinStdLib
+    implementation androidXLibraries.appCompat
+    implementation androidXLibraries.coreKtx
+    androidTestImplementation androidXLibraries.junitAndroid
+    testImplementation androidXLibraries.junitAndroid
+
+    implementation libraries.koinAndroid
+    implementation libraries.coroutines
 }

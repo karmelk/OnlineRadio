@@ -1,51 +1,38 @@
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.library")
+    id("kotlin-kapt")
+}
 
 android {
-    compileSdkVersion compileVersion
-    buildToolsVersion buildVersion
-
-    defaultConfig {
-        minSdkVersion minVersion
-        targetSdkVersion targetVersion
-        versionCode appVersionCode
-        versionName appVersionName
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    
+    flavorDimensions "named"
+    productFlavors{
+        dev{
+            dimension ="named"
+            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
+            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
         }
-    }
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        prod{
+            dimension ="named"
+            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
+            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
+        }
     }
 
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation supportDependencies.kotlin
-    implementation supportDependencies.appcompat
-    implementation supportDependencies.coreKtx
-    testImplementation supportDependencies.junit
-    androidTestImplementation  supportDependencies.junitAndroid
-    androidTestImplementation supportDependencies.espressoCore
-    implementation project(path: ':entities')
-    implementation project(path: ':appbase')
-    implementation supportDependencies.retrofit
-    implementation supportDependencies.moshiConverter
-    implementation supportDependencies.loggingInterceptor
-    implementation supportDependencies.koinAndroid
-    implementation supportDependencies.roomRuntime
-    kapt supportDependencies.roomCompiler
-    implementation supportDependencies.coroutines
+    implementation libraries.kotlinStdLib
+    implementation androidXLibraries.appCompat
+    implementation androidXLibraries.coreKtx
+    androidTestImplementation androidXLibraries.junitAndroid
+    testImplementation androidXLibraries.junitAndroid
+    implementation androidXLibraries.roomRuntime
+    kapt androidXLibraries.roomCompiler
+
+    implementation libraries.retrofit
+    implementation libraries.moshiConverter
+    implementation libraries.loggingInterceptor
+    implementation libraries.koinAndroid
+    implementation libraries.coroutines
 }
