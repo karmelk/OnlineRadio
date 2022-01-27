@@ -2,56 +2,60 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_main"
+    android:id="@+id/main_nav"
     app:startDestination="@id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.onlinestation.fragment.genre.GenreFragment"
+        android:name="com.kmstore.onlinestation.fragment.genre.GenreFragment"
         android:label="PrimaryGenderFragment"
         tools:layout="@layout/fragment_genre">
 
         <action
             android:id="@+id/action_navigation_home_to_navigation_stations_by_genre_id"
             app:destination="@id/navigation_stations_by_genre_id"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/navigation_home"
-            app:popUpToInclusive="false">
-
-        </action>
+            app:popUpToInclusive="false" />
         <argument
-            android:name="gender_id"
-            app:argType="long" />
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_random_station"
-        android:name="com.onlinestation.fragment.topstations.TopStationsFragment"
+        android:name="com.kmstore.onlinestation.fragment.topstations.TopStationsFragment"
         android:label="RandomFragment"
         tools:layout="@layout/fragment_top_station" />
 
     <fragment
         android:id="@+id/navigation_favorite"
-        android:name="com.onlinestation.fragment.favorite.FavoriteFragment"
+        android:name="com.kmstore.onlinestation.fragment.favorite.FavoriteFragment"
         android:label="FavoriteFragment"
         tools:layout="@layout/fragment_favorite" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.onlinestation.fragment.settings.SettingsFragment"
+        android:name="com.kmstore.onlinestation.fragment.settings.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_stations_by_genre_id"
-        android:name="com.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment"
+        android:name="com.kmstore.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment"
         android:label="StationListByGenreIdFragment"
         tools:layout="@layout/fragment_station_list_by_genre_id">
+
 
     </fragment>
 
     <fragment
         android:id="@+id/navigation_search_radios"
-        android:name="com.onlinestation.fragment.searchradios.SearchFragment"
+        android:name="com.kmstore.onlinestation.fragment.searchradios.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
 

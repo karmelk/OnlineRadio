@@ -3,6 +3,18 @@ plugins {
     id("kotlin-kapt")
 }
 
+android {
+    flavorDimensions "named"
+    productFlavors{
+        dev{
+            dimension ="named"
+        }
+        prod{
+            dimension ="named"
+        }
+    }
+}
+
 dependencies {
 
     implementation project(path: ':data')

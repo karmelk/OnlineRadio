@@ -23,7 +23,7 @@
     <string name="label_previous">Previous</string>
     <string name="label_stop">Stop</string>
     <string name="label_play_pause">Play and pause toggle</string>
-    <string name="not_network_hint">No internet connection.</string>
+    <string name="not_network_hint">Network is not available. \n Please check it.</string>
     <string name="label_error">Something went wrong, please try again</string>
     <string name="button_retry">Retry</string>
 

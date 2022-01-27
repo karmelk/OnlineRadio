@@ -5,7 +5,7 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+
         mavenCentral()
     }
 
@@ -19,34 +19,37 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 }
 
 subprojects {
+    apply(plugin: "kotlin-android")
     if (project.name == "app") {
         apply(plugin: "com.android.application")
-    } else {
-        apply(plugin: "com.android.library")
-
         android {
             defaultConfig {
-                compileSdkVersion app.compileVersion
-                buildToolsVersion app.buildVersion
-                minSdkVersion(app.minVersion)
-                targetSdkVersion(app.targetVersion)
-                versionCode app.versionCode
-                versionName app.versionName
+                applicationId app.id
             }
+        }
+    } else {
+        apply(plugin: "com.android.library")
+    }
+
+    android {
+        defaultConfig {
+            compileSdk app.compileVersion
+
+            minSdk app.minVersion
+            targetSdk app.targetVersion
+            versionCode app.versionCode
+            versionName app.versionName
         }
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
-
-    apply(plugin: "kotlin-android")
 
     dependencies {
         implementation(libraries.kotlinStdLib)

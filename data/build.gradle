@@ -3,6 +3,24 @@ plugins {
     id("kotlin-kapt")
 }
 
+android {
+    
+    flavorDimensions "named"
+    productFlavors{
+        dev{
+            dimension ="named"
+            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
+            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
+        }
+        prod{
+            dimension ="named"
+            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
+            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
+        }
+    }
+
+}
+
 dependencies {
     implementation libraries.kotlinStdLib
     implementation androidXLibraries.appCompat
