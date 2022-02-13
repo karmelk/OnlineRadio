@@ -6,12 +6,11 @@ plugins {
 }
 
 android {
-    def properties = new Properties()
-    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
     signingConfigs {
         release {
 
-            storeFile file( properties.getProperty("RELEASE_STORE_FILE", ""))
+            storeFile file(RELEASE_STORE_PASSWORD)
             storePassword RELEASE_STORE_PASSWORD
             keyAlias RELEASE_KEY_ALIAS
             keyPassword RELEASE_KEY_PASSWORD
@@ -41,29 +40,18 @@ android {
     android.applicationVariants.all { variant ->
 
         variant.outputs.all {
-
-            if (variant.buildType.name == "debug") {
-                outputFileName = "OnlineRadio_release_${variant.name}_${variant.versionName}.apk"
-            } else {
-                outputFileName = "OnlineRadio_debug_${variant.name}_${variant.versionName}.apk"
-            }
-
+            outputFileName = "OnlineRadio_${variant.name}.apk"
         }
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     buildFeatures {
-        viewBinding = true
+        viewBinding true
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':data')
     implementation project(path: ':domain')
-    implementation libraries.kotlinStdLib
     implementation androidXLibraries.coreKtx
     androidTestImplementation androidXLibraries.junitAndroid
     testImplementation androidXLibraries.junitAndroid

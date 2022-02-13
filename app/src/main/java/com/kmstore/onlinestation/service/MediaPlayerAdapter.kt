@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.SystemClock
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import android.widget.Toast
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -23,6 +24,7 @@ class MediaPlayerAdapter(
 
     private fun initExoPlayer() {
         exoPlayer = SimpleExoPlayer.Builder(context).build()
+        exoPlayer?.addListener(eventListener)
     }
 
     fun playFromMedia(metadata: MediaMetadataCompat?) {
@@ -31,7 +33,7 @@ class MediaPlayerAdapter(
         initExoPlayer()
         val stationUrl = metadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)
         stationUrl?.let {
-            GlobalScope.launch(Dispatchers.IO) { // CoroutineScope
+            CoroutineScope(Dispatchers.IO).launch() { // CoroutineScope
                 loadRadio(it)
             }
         }
@@ -136,7 +138,7 @@ class MediaPlayerAdapter(
                 prepare()
                 play()
                 playWhenReady = true
-                addListener(eventListener)
+               // addListener(eventListener)
             }
         }
     }
@@ -147,7 +149,10 @@ class MediaPlayerAdapter(
             playWhenReady: Boolean,
             playbackState: Int
         ) {
-            setNewState(PlaybackStateCompat.STATE_PLAYING)
+            if(playbackState!=PlaybackStateCompat.STATE_PLAYING && !playWhenReady){
+                setNewState(PlaybackStateCompat.STATE_BUFFERING)
+            }
+            Log.i("overrideFuns", "onPlayerStateChanged: $playWhenReady $playbackState")
              // Toast.makeText(context, "$playbackState+ $playWhenReady", Toast.LENGTH_SHORT).show()
         }
 
@@ -157,5 +162,25 @@ class MediaPlayerAdapter(
             super.onPlayerError(error)
         }
 
+        override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {
+            Toast.makeText(context, "${volume} $muted", Toast.LENGTH_SHORT).show()
+            super.onDeviceVolumeChanged(volume, muted)
+        }
+
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            Log.i("overrideFuns", "onPlayWhenReadyChanged: $playWhenReady")
+            super.onPlayWhenReadyChanged(playWhenReady, reason)
+        }
+
+        override fun onIsLoadingChanged(isLoading: Boolean) {
+            Log.i("overrideFuns", "onIsLoadingChanged: $isLoading")
+            super.onIsLoadingChanged(isLoading)
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            Log.i("overrideFuns", "onIsPlayingChanged: $isPlaying")
+            setNewState(PlaybackStateCompat.STATE_PLAYING)
+            super.onIsPlayingChanged(isPlaying)
+        }
     }
 }

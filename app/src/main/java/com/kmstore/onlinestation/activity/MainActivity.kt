@@ -106,9 +106,12 @@ class MainActivity : AppCompatActivity() {
 
             playPauseIcon.onEach {
                 //binding.steamingStation.gone()
+
                 if (it) {
+                  //  binding.steamingStation.show()
                     binding.playPause.setImageResource(R.drawable.ic_pause_bottom_panel)
                 } else {
+                    //binding.steamingStation.gone()
                     binding.playPause.setImageResource(R.drawable.ic_play_bottom_panel)
                 }
             }.observeInLifecycle(this@MainActivity)
@@ -198,8 +201,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.initBalance()
     }
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         val searchItem: MenuItem? = menu?.findItem(R.id.actionSearch)
@@ -297,17 +298,34 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPlaybackStateChanged(playbackState: PlaybackStateCompat?) {
             if (playbackState == null) {
-                mainViewModel.playPauseIcon.value = false
+                mainViewModel.playPauseIcon(false)
+                binding.steamingStation.gone()
                 isPlaying = false
             } else {
-                if (playbackState.state == PlaybackStateCompat.STATE_PLAYING) {
-                    // it.state == PlaybackStateCompat.STATE_PLAYING
-                    mainViewModel.playPauseIcon.value = true
-                    isPlaying = true
-                } else {
-                    //  it.state == PlaybackStateCompat.STATE_STOPPED
-                    mainViewModel.playPauseIcon.value = false
-                    isPlaying = false
+                when (playbackState.state) {
+                    PlaybackStateCompat.STATE_BUFFERING -> {
+                        // it.state == PlaybackStateCompat.STATE_PLAYING
+                        mainViewModel.playPauseIcon(true)
+                        binding.steamingStation.show()
+
+                    }
+                    PlaybackStateCompat.STATE_PLAYING -> {
+                        mainViewModel.playPauseIcon(true)
+                        binding.steamingStation.gone()
+                        isPlaying = true
+                    }
+                    PlaybackStateCompat.STATE_STOPPED -> {
+                        mainViewModel.playPauseIcon(false)
+                        binding.steamingStation.gone()
+                        isPlaying = false
+                    }
+
+//                    else -> {
+//                        //  it.state == PlaybackStateCompat.STATE_STOPPED
+//                        mainViewModel.playPauseIcon(false)
+//                        binding.steamingStation.gone()
+//                        isPlaying = false
+//                    }
                 }
             }
         }
@@ -316,6 +334,7 @@ class MainActivity : AppCompatActivity() {
             if (mediaMetadata == null) {
                 return
             }
+            mainViewModel.playPauseIcon(true)
             binding.steamingStation.show()
             val mediaId = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
             mainViewModel.checkStationInDB(mediaId.toInt())
@@ -331,18 +350,6 @@ class MainActivity : AppCompatActivity() {
                     )
                 )
                 .into(binding.stationIcon)
-        }
-
-        override fun onSessionDestroyed() {
-            binding.steamingStation.gone()
-            super.onSessionDestroyed()
-
-
-        }
-
-        override fun onQueueChanged(queue: List<MediaSessionCompat.QueueItem>) {
-            binding.steamingStation.gone()
-            super.onQueueChanged(queue)
         }
 
     }

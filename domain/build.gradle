@@ -18,7 +18,6 @@ android {
 dependencies {
 
     implementation project(path: ':data')
-    implementation libraries.kotlinStdLib
     implementation androidXLibraries.appCompat
     implementation androidXLibraries.coreKtx
     androidTestImplementation androidXLibraries.junitAndroid

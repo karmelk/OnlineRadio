@@ -27,7 +27,8 @@ class MainViewModel(
     private val _errorNotBalanceLD: MutableSharedFlow<Unit> by lazy { MutableSharedFlow() }
     val errorNotBalanceLD get() = _errorNotBalanceLD.asSharedFlow()
 
-    val playPauseIcon = MutableStateFlow(false)
+    private val _playPauseIcon: MutableSharedFlow<Boolean> by lazy { MutableSharedFlow() }
+    val playPauseIcon get() = _playPauseIcon.asSharedFlow()
 
     fun initBalance() {
         mainActivityInteractorUseCase.getBalanceData()
@@ -44,6 +45,12 @@ class MainViewModel(
     fun playPause(isPlaying: Boolean) {
         viewModelScope.launch {
             _playPause.emit(isPlaying)
+        }
+    }
+
+    fun playPauseIcon(isPlaying: Boolean) {
+        viewModelScope.launch {
+            _playPauseIcon.emit(isPlaying)
         }
     }
 

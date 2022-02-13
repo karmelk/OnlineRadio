@@ -9,20 +9,19 @@ android {
     productFlavors{
         dev{
             dimension ="named"
-            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
-            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
+            buildConfigField "String", "API_KEY", API_KEY
+            buildConfigField "String", "API_URL", BASE_URL
         }
         prod{
             dimension ="named"
-            buildConfigField "String", "API_KEY", '"eHJhZGlvcGVyZmVjdGFwcA"'
-            buildConfigField "String", "API_URL", '"https://radio.apk.am/"'
+            buildConfigField "String", "API_KEY", API_KEY
+            buildConfigField "String", "API_URL", BASE_URL
         }
     }
 
 }
 
 dependencies {
-    implementation libraries.kotlinStdLib
     implementation androidXLibraries.appCompat
     implementation androidXLibraries.coreKtx
     androidTestImplementation androidXLibraries.junitAndroid
