@@ -1,7 +1,7 @@
 ext {
 
     app = [
-            "id"            : "com.kmstore.onlineradio",
+            "id"            : "com.nextidea.onlinestation",
             "minVersion"    : 21,
             "compileVersion": 31,
             "targetSdk"     : 31,

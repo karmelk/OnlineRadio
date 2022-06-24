@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.kmstore.onlinestation.fragment.genre.GenreFragment"
+        android:name="com.nextidea.onlinestation.fragment.genre.GenreFragment"
         android:label="PrimaryGenderFragment"
         tools:layout="@layout/fragment_genre">
 
@@ -28,25 +28,25 @@
 
     <fragment
         android:id="@+id/navigation_random_station"
-        android:name="com.kmstore.onlinestation.fragment.topstations.TopStationsFragment"
+        android:name="com.nextidea.onlinestation.fragment.topstations.TopStationsFragment"
         android:label="RandomFragment"
         tools:layout="@layout/fragment_top_station" />
 
     <fragment
         android:id="@+id/navigation_favorite"
-        android:name="com.kmstore.onlinestation.fragment.favorite.FavoriteFragment"
+        android:name="com.nextidea.onlinestation.fragment.favorite.FavoriteFragment"
         android:label="FavoriteFragment"
         tools:layout="@layout/fragment_favorite" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.kmstore.onlinestation.fragment.settings.SettingsFragment"
+        android:name="com.nextidea.onlinestation.fragment.settings.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_stations_by_genre_id"
-        android:name="com.kmstore.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment"
+        android:name="com.nextidea.onlinestation.fragment.stationsbygenderId.StationListByGenreIdFragment"
         android:label="StationListByGenreIdFragment"
         tools:layout="@layout/fragment_station_list_by_genre_id">
 
@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/navigation_search_radios"
-        android:name="com.kmstore.onlinestation.fragment.searchradios.SearchFragment"
+        android:name="com.nextidea.onlinestation.fragment.searchradios.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
 
