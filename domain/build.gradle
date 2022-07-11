@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("kotlin-kapt")
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -13,6 +14,21 @@ android {
             dimension ="named"
         }
     }
+//    project.subprojects {
+//        this.variants().all { variant ->
+//            variant.sourceSets.java.each {
+//                it.srcDirs += "build/generated/ksp/${variant.name}/kotlin"
+//            }
+//        }
+//    }
+
+        android.libraryVariants.all { variant ->
+            variant.sourceSets.java.each {
+                it.srcDirs += "build/generated/ksp/${variant.name}/kotlin"
+            }
+        }
+
+
 }
 
 dependencies {
@@ -22,7 +38,8 @@ dependencies {
     implementation androidXLibraries.coreKtx
     androidTestImplementation androidXLibraries.junitAndroid
     testImplementation androidXLibraries.junitAndroid
-
-    implementation libraries.koinAndroid
     implementation libraries.coroutines
+    implementation libraries.koinAndroid
+    implementation libraries.koinAnnotations
+    ksp libraries.kspCompiler
 }

@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class StationListByGenreIdViewModel(
     private val stationListByGenreIdInteractorUseCase: StationListByGenreIdInteractorUseCase,
     private val addStationDBInteractorUseCase: AddStationDBInteractorUseCase

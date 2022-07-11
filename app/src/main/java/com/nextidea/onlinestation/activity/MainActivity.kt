@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.initBalance()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         val searchItem: MenuItem? = menu?.findItem(R.id.actionSearch)
         val actionShare: MenuItem? = menu?.findItem(R.id.actionShare)

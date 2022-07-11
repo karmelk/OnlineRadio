@@ -16,7 +16,9 @@ import com.nextidea.onlinestation.domain.interactors.SearchStationInteractorUseC
 import com.nextidea.onlinestation.data.entities.request.QuerySearchBody
 import com.nextidea.onlinestation.domain.entities.StationItem
 import com.nextidea.onlinestation.domain.utils.toDomain
+import org.koin.core.annotation.Factory
 
+@Factory
 internal class SearchStationUseCaseImpl(
     private val localSQLRepository: LocalSQLRepository,
     private val searchRepository: SearchStationRepository

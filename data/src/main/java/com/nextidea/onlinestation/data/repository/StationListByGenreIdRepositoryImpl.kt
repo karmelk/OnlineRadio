@@ -8,8 +8,9 @@ import com.nextidea.onlinestation.data.entities.request.QueryStationByGenderBody
 import com.nextidea.onlinestation.data.entities.DataResult
 
 import com.nextidea.onlinestation.data.entities.stationmodels.StationItemResponse
+import org.koin.core.annotation.Single
 import retrofit2.Response
-
+@Single
 internal class StationListByGenreIdRepositoryImpl(private val allApiService: AllApiService) :
     StationListByGenreIdRepository {
 

@@ -9,7 +9,10 @@ import com.nextidea.onlinestation.domain.interactors.AddFavoriteStationsDBUseCas
 import com.nextidea.onlinestation.domain.utils.fromStationToStationDB
 import com.nextidea.onlinestation.domain.entities.StationItem
 import com.nextidea.onlinestation.domain.utils.toDomain
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 
+@Factory
 internal class AddFavoriteStationsDBUseCaseImpl(private val favoriteStationsRepository: FavoriteStationsRepository) :
     AddFavoriteStationsDBUseCase {
 

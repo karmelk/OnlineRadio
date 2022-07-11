@@ -12,7 +12,10 @@ import com.nextidea.onlinestation.domain.interactors.TopStationInteractorUseCase
 import com.nextidea.onlinestation.data.entities.request.QueryTopStationBody
 import com.nextidea.onlinestation.domain.entities.StationItem
 import com.nextidea.onlinestation.domain.utils.toDomain
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 
+@Factory
 internal class TopStationUseCaseImpl(
     private val topStationRepository: TopStationRepository,
     private val localSQLRepository: LocalSQLRepository

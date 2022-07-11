@@ -10,8 +10,10 @@ import com.nextidea.onlinestation.data.entities.stationmodels.StationItemRespons
 import com.nextidea.onlinestation.data.entities.DataResult
 import com.nextidea.onlinestation.data.util.NO_INTERNET_CONNECTION
 import com.nextidea.onlinestation.data.util.hasNetwork
+import org.koin.core.annotation.Single
 
-class TopStationRepositoryImpl(
+@Single
+internal class TopStationRepositoryImpl(
     private val allApiService: AllApiService,
     private val context: Context
 ) : TopStationRepository {

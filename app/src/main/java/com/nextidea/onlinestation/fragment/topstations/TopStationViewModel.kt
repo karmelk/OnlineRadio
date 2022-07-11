@@ -11,7 +11,9 @@ import com.nextidea.onlinestation.data.util.NO_INTERNET_CONNECTION
 import com.nextidea.onlinestation.domain.entities.StationItem
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class TopStationViewModel(
     private val topStationInteractorUseCase: TopStationInteractorUseCase,
     private val addStationDBInteractorUseCase: AddStationDBInteractorUseCase

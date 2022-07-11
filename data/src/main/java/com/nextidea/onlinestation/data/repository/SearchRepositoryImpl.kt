@@ -8,7 +8,9 @@ import com.nextidea.onlinestation.data.entities.DataResult
 import com.nextidea.onlinestation.data.entities.ParentResponse
 import com.nextidea.onlinestation.data.entities.request.QuerySearchBody
 import com.nextidea.onlinestation.data.entities.stationmodels.StationItemResponse
+import org.koin.core.annotation.Single
 
+@Single
 internal class SearchRepositoryImpl(private val allApiService: AllApiService) :
     SearchStationRepository {
 

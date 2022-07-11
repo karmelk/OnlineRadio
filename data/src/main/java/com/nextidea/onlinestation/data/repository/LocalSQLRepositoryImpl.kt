@@ -7,7 +7,9 @@ import com.nextidea.onlinestation.data.entities.OwnerUserBalance
 import com.nextidea.onlinestation.data.entities.gendermodels.GenderItemDb
 import com.nextidea.onlinestation.data.entities.stationmodels.StationItemDb
 import kotlinx.coroutines.flow.flow
+import org.koin.core.annotation.Single
 
+@Single
 internal class LocalSQLRepositoryImpl(
     private val stationDao: FavoriteDao,
     private val balanceDto: BalanceDto,

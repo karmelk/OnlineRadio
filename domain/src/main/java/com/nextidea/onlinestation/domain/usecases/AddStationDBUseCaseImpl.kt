@@ -12,7 +12,9 @@ import com.nextidea.onlinestation.data.entities.RadioException
 import com.nextidea.onlinestation.domain.entities.StationItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Factory
 
+@Factory
 internal class AddStationDBUseCaseImpl(
     private val localSQLRepository: LocalSQLRepository
 ) : AddStationDBInteractorUseCase {

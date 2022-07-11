@@ -4,7 +4,10 @@ import com.nextidea.onlinestation.data.repository.LocalSQLRepository
 import com.nextidea.onlinestation.domain.interactors.SettingsInteractorUseCase
 import com.nextidea.onlinestation.data.entities.OwnerUserBalance
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 
+@Factory
 internal class SettingsUseCaseImpl(
     private val localSQLRepository: LocalSQLRepository
 ) : SettingsInteractorUseCase {

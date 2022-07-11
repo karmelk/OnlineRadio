@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class SearchViewModel(
     private val searchStationInteractorUseCase: SearchStationInteractorUseCase,
     private val addStationDBInteractorUseCase: AddStationDBInteractorUseCase

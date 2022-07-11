@@ -4,8 +4,10 @@ import android.content.Context
 import com.nextidea.onlinestation.data.entities.OwnerUserBalance
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import org.koin.core.annotation.Single
 
-class PreferenceServiceImpl(private val context: Context) : PreferenceService {
+@Single
+internal class PreferenceServiceImpl(private val context: Context) : PreferenceService {
 
     private val authenticationKey = "authenticationKey"
 

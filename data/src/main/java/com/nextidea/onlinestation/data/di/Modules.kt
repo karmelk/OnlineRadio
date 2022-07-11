@@ -19,27 +19,27 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-val apiModule = module {
-
-    single { Moshi.Builder().build() }
-    single<Retrofit> {
-        Retrofit.Builder()
-            .baseUrl(BuildConfig.API_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .apply {
-                client(
-                    OkHttpClient.Builder()
-                        .addInterceptor(HeaderInterceptor())
-                        .addInterceptor(HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        })
-                        .build()
-                )
-            }
-            .build()
-    }
-    single<AllApiService> { get<Retrofit>().create(AllApiService::class.java) }
-}
+//val apiModule = module {
+//
+//    single { Moshi.Builder().build() }
+//    single<Retrofit> {
+//        Retrofit.Builder()
+//            .baseUrl(BuildConfig.API_URL)
+//            .addConverterFactory(MoshiConverterFactory.create())
+//            .apply {
+//                client(
+//                    OkHttpClient.Builder()
+//                        .addInterceptor(HeaderInterceptor())
+//                        .addInterceptor(HttpLoggingInterceptor().apply {
+//                            level = HttpLoggingInterceptor.Level.BODY
+//                        })
+//                        .build()
+//                )
+//            }
+//            .build()
+//    }
+//    single<AllApiService> { get<Retrofit>().create(AllApiService::class.java) }
+//}
 
 val databaseModule = module {
     fun provideDatabase(application: Application): AppDatabase {
@@ -54,14 +54,14 @@ val databaseModule = module {
     single { get<AppDatabase>().genreDao() }
 }
 
-val repositoryModule = module {
-    single<GenreRepository> { GenreRepositoryImpl(get(),get(),get()) }
-    single<TopStationRepository> { TopStationRepositoryImpl(get(),get()) }
-    single<PreferenceService> { PreferenceServiceImpl(get()) }
-    single<StationListByGenreIdRepository> { StationListByGenreIdRepositoryImpl(get()) }
-    single<FavoriteStationsRepository> { FavoriteStationsRepositoryImpl(get()) }
-    single<SearchStationRepository> { SearchRepositoryImpl(get()) }
-    single<LocalSQLRepository> { LocalSQLRepositoryImpl(get(),get(),get()) }
-}
+//val repositoryModule = module {
+//    single<GenreRepository> { GenreRepositoryImpl(get(),get(),get()) }
+//    single<TopStationRepository> { TopStationRepositoryImpl(get(),get()) }
+//    single<PreferenceService> { PreferenceServiceImpl(get()) }
+//    single<StationListByGenreIdRepository> { StationListByGenreIdRepositoryImpl(get()) }
+//    single<FavoriteStationsRepository> { FavoriteStationsRepositoryImpl(get()) }
+//    single<SearchStationRepository> { SearchRepositoryImpl(get()) }
+//    single<LocalSQLRepository> { LocalSQLRepositoryImpl(get(),get(),get()) }
+//}
 
 

@@ -14,7 +14,10 @@ import com.nextidea.onlinestation.domain.interactors.StationListByGenreIdInterac
 import com.nextidea.onlinestation.data.entities.request.QueryStationByGenderBody
 import com.nextidea.onlinestation.domain.entities.StationItem
 import com.nextidea.onlinestation.domain.utils.toDomain
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 
+@Factory
 internal class StationListByGenreIdUseCaseImpl(
     private val stationListByGenreIdRepository: StationListByGenreIdRepository,
     private val localSQLRepository: LocalSQLRepository

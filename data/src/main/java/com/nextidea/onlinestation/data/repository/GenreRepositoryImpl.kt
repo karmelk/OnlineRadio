@@ -12,9 +12,10 @@ import com.nextidea.onlinestation.data.entities.request.QueryGenreBody
 import com.nextidea.onlinestation.data.entities.stationmodels.StationItemDb
 import com.nextidea.onlinestation.data.util.NO_INTERNET_CONNECTION
 import com.nextidea.onlinestation.data.util.hasNetwork
+import org.koin.core.annotation.Single
 import retrofit2.Response
-
-class GenreRepositoryImpl(
+@Single
+internal class GenreRepositoryImpl(
     private val allApiService: AllApiService,
     private val localSQLRepository: LocalSQLRepository,
     private val context: Context

@@ -2,7 +2,9 @@ package com.nextidea.onlinestation.service
 
 import android.support.v4.media.MediaMetadataCompat
 import com.nextidea.onlinestation.domain.entities.StationItem
+import org.koin.core.annotation.Single
 
+@Single
 class PlayingRadioLibrary {
     private var stationList: MutableList<StationItem> = mutableListOf()
     private var currentItemIndex = 0

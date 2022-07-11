@@ -7,8 +7,9 @@ import com.nextidea.onlinestation.data.entities.Constants.Companion.defaultUserI
 import com.nextidea.onlinestation.domain.interactors.MainActivityInteractorUseCase
 import com.nextidea.onlinestation.data.entities.OwnerUserBalance
 import kotlinx.coroutines.*
+import org.koin.core.annotation.Factory
 
-
+@Factory
 internal class MainActivityUseCaseImpl(
     private val genreRepository: GenreRepository,
     private val localSQLRepository: LocalSQLRepository

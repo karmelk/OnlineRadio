@@ -13,7 +13,9 @@ import com.nextidea.onlinestation.data.entities.request.QueryGenreBody
 import com.nextidea.onlinestation.domain.utils.toDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Factory
 
+@Factory
 internal class GenreUseCaseImpl(private val genreRepository: GenreRepository) :
     GenreInteractorUseCase {
 
