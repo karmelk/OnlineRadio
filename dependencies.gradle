@@ -5,21 +5,21 @@ ext {
             "minVersion"    : 21,
             "compileVersion": 32,
             "targetSdk"     : 32,
-            "versionCode"   : 1,
+            "versionCode"   : 2,
             "versionName"   : "1.0.1",
     ]
 
     versions = [
-            "material"                  : "1.3.0",
+            "material"                  : "1.6.1",
             "okHttp3"                   : "4.9.0",
             "glideVersion"              : "4.12.0",
-            "androidxCoreKtx"           : "1.3.2",
+            "androidxCoreKtx"           : "1.8.0",
             "appcompat"                 : '1.3.0',
-            "androidxConstraintLayout"  : "2.0.4",
+            "androidxConstraintLayout"  : "2.1.4",
             "androidxlifecycle"         : "2.3.0",
-            "androidxFragment"          : "1.2.2",
-            "androidxNavigation"        : "2.3.5",
-            "androidxRecyclerView"      : "1.2.0",
+            "androidxFragment"          : "1.5.0",
+            "androidxNavigation"        : "2.5.0",
+            "androidxRecyclerView"      : "1.2.1",
             "androidxSwiperefreshlayout": "1.1.0",
             "androidxRoomVersion"       : "2.2.2",
             "androidxJunitAndroid"      : "1.1.1",
@@ -28,10 +28,10 @@ ext {
             "kspVersion"                : "1.0.1",
             "retrofitVersion"           : '2.9.0',
             "moshiConverterVersion"     : '2.9.0',
-            "loggingVersion"            : '4.3.1',
+            "loggingVersion"            : '4.10.0',
             "exoplayerVersion"          : '2.14.1',
-            "versionCardView"           : '28.0.0',
-            "coroutinesVersion"         : '1.3.9',
+            "versionCardView"           : '1.0.0',
+            "coroutinesVersion"         : '1.6.3',
     ]
 
     classpaths = [
@@ -50,7 +50,7 @@ ext {
             "moshiConverter"    : "com.squareup.retrofit2:converter-moshi:$versions.moshiConverterVersion",
             "loggingInterceptor": "com.squareup.okhttp3:logging-interceptor:$versions.loggingVersion",
             "exoplayer"         : "com.google.android.exoplayer:exoplayer:$versions.exoplayerVersion",
-            "cardView"          : "com.android.support:cardview-v7:$versions.versionCardView",
+            "cardView"          : "androidx.cardview:cardview:$versions.versionCardView",
     ]
 
     androidXLibraries = [

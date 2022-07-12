@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
 
         navOptions = NavOptions.Builder()
-            .setPopUpTo(nav.graph.startDestination, false)
+            .setPopUpTo(nav.graph.startDestinationId, false)
             .build()
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

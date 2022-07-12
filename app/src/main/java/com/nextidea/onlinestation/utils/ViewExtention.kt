@@ -58,12 +58,12 @@ fun SearchView.textChanges(): Flow<CharSequence?> {
         val listener = object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                offer(query)
-               return true
+                trySend(query).isSuccess
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                offer(newText)
+                trySend(newText).isSuccess
                 return true
             }
         }
