@@ -9,7 +9,7 @@ suspend fun <R> makeApiCall(
 ) = try {
     call()
 } catch (e: Exception) {
-    DataResult.Error(RadioException(errorMessage,errorBody = e))
+    DataResult.Error(RadioException(errorMessage))
 }
 
 fun <Model> analyzeResponse(
@@ -22,13 +22,30 @@ fun <Model> analyzeResponse(
                 if (it.status == 200) {
                     DataResult.Success(it.datas)
                 } else {
-                    DataResult.Error(RadioException(response.code(),Throwable()))
+                    DataResult.Error(RadioException(response.code()))
                 }
-            } ?: DataResult.Error(RadioException(response.code(),Throwable("Response body is null")))
+            } ?: DataResult.Error(RadioException(response.code()))
         }
 
         else -> {
-            return DataResult.Error(RadioException(response.code(),Throwable(response.message())))
+            return DataResult.Error(RadioException(response.code()))
+        }
+    }
+}
+
+fun <Model> newAnalyzeResponse(
+    response: Response<Model>
+): DataResult<Model> {
+    when {
+        response.isSuccessful -> {
+            val responseBody = response.body()
+            return responseBody?.let {
+                DataResult.Success(it)
+            } ?: DataResult.Error(RadioException(response.code()))
+        }
+
+        else -> {
+            return DataResult.Error(RadioException(response.code()))
         }
     }
 }

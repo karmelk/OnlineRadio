@@ -61,6 +61,7 @@ class DataModule() {
     @Single
     fun provideGenreDao(db: AppDatabase) = db.genreDao()
 
+    @Single
     fun provideDatabase(application: Application): AppDatabase {
         return Room.databaseBuilder(application, AppDatabase::class.java, "RadioDB")
             //.fallbackToDestructiveMigration()

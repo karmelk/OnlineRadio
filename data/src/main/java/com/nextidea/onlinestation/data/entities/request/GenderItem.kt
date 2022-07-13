@@ -1,7 +1,7 @@
 package com.nextidea.onlinestation.data.entities.request
 
 data class GenderItem(
-    val id: Long,
+    val stationcount: Int,
     val name: String,
-    val img: String
+    val isoCode: String
 )

@@ -29,6 +29,7 @@ android {
 dependencies {
     implementation androidXLibraries.appCompat
     implementation androidXLibraries.coreKtx
+
     androidTestImplementation androidXLibraries.junitAndroid
     testImplementation androidXLibraries.junitAndroid
     implementation androidXLibraries.roomRuntime
@@ -41,4 +42,5 @@ dependencies {
     implementation libraries.koinAndroid
     implementation libraries.koinAnnotations
     ksp libraries.kspCompiler
+    implementation libraries.paging
 }

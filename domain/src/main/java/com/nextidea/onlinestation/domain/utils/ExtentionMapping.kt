@@ -39,10 +39,4 @@ fun StationItemResponse.toDomain(
     isFavorite = isFavorite
 )
 
-fun ResponseGender.toDomain() = GenderItem(
-    name = name,
-    id = id,
-    img =BuildConfig.API_URL + FOLDER_GENRES + img
-)
-
 

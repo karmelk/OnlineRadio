@@ -42,4 +42,5 @@ dependencies {
     implementation libraries.koinAndroid
     implementation libraries.koinAnnotations
     ksp libraries.kspCompiler
+    implementation libraries.paging
 }

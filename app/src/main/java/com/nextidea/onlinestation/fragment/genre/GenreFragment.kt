@@ -12,6 +12,7 @@ import com.nextidea.onlinestation.appbase.utils.viewBinding
 import com.nextidea.onlinestation.databinding.FragmentGenreBinding
 import com.nextidea.onlinestation.utils.gone
 import com.nextidea.onlinestation.utils.show
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GenreFragment : FragmentBaseMVVM<GenreViewModel, FragmentGenreBinding>(),
@@ -87,7 +88,9 @@ class GenreFragment : FragmentBaseMVVM<GenreViewModel, FragmentGenreBinding>(),
                     Toast.LENGTH_SHORT
                 ).show()
             }
+            movies.collectLatest() {
 
+            }
             onEach(isLastPage) {
                 Log.d("Scroll", "onScrolled:IsLastePage $it ")
                 lastPage = it

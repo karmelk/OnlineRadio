@@ -1,20 +1,26 @@
 package com.nextidea.onlinestation.fragment.genre
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nextidea.onlinestation.appbase.viewmodel.BaseViewModel
+import com.nextidea.onlinestation.data.dataservice.source.CountryPagingSource
 import com.nextidea.onlinestation.domain.interactors.GenreInteractorUseCase
 import com.nextidea.onlinestation.data.entities.request.GenderItem
 import kotlinx.coroutines.launch
 import com.nextidea.onlinestation.data.entities.DataResult
+import com.nextidea.onlinestation.data.entities.gendermodels.ResponseGender
+import com.nextidea.onlinestation.data.repository.GenreRepository
 import com.nextidea.onlinestation.data.util.NO_INTERNET_CONNECTION
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 
 @KoinViewModel
-class GenreViewModel(private val genreUseCase: GenreInteractorUseCase) : BaseViewModel() {
+class GenreViewModel(private val genreUseCase: GenreInteractorUseCase, private val countryPagingSource: GenreRepository) : BaseViewModel() {
 
     private val _getGenderData: MutableStateFlow<List<GenderItem>?> by lazy { MutableStateFlow(null) }
     val getGender = _getGenderData.asStateFlow()
@@ -25,9 +31,21 @@ class GenreViewModel(private val genreUseCase: GenreInteractorUseCase) : BaseVie
     private val _isLastPage by lazy { MutableSharedFlow<Boolean>() }
     val isLastPage = _isLastPage.asSharedFlow()
 
-    init {
-        getGenreList()
+
+    val query: StateFlow<GenderItem> = _query.asStateFlow()
+
+
+    val data = emptyList<GenderItem>()
+        .map{ newPager() }
+        .flatMap { it.flow }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
+    private suspend fun newPager(): PagingData<GenderItem> {
+        return Pager(PagingConfig(30, enablePlaceholders = false, prefetchDistance = 10)) {
+            countryPagingSource.getGenreListDataByPaging()
+        }
     }
+
 
     fun getGenreList(update: Boolean = false) {
         viewModelScope.launch() {

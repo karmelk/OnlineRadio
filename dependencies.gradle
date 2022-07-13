@@ -32,6 +32,7 @@ ext {
             "exoplayerVersion"          : '2.14.1',
             "versionCardView"           : '1.0.0',
             "coroutinesVersion"         : '1.6.3',
+            "pagingVersion"             : '3.1.1',
     ]
 
     classpaths = [
@@ -51,6 +52,7 @@ ext {
             "loggingInterceptor": "com.squareup.okhttp3:logging-interceptor:$versions.loggingVersion",
             "exoplayer"         : "com.google.android.exoplayer:exoplayer:$versions.exoplayerVersion",
             "cardView"          : "androidx.cardview:cardview:$versions.versionCardView",
+            "paging"            : "androidx.paging:paging-common-ktx:$versions.pagingVersion",
     ]
 
     androidXLibraries = [

@@ -7,6 +7,7 @@ import com.nextidea.onlinestation.data.entities.Constants
 import com.nextidea.onlinestation.data.entities.Constants.Companion.METHOD_GET_GENRES
 import com.nextidea.onlinestation.data.entities.Constants.Companion.errorDataNull
 import com.nextidea.onlinestation.data.entities.RadioException
+import com.nextidea.onlinestation.data.entities.gendermodels.ResponseGender.Companion.toDomain
 import com.nextidea.onlinestation.domain.interactors.GenreInteractorUseCase
 import com.nextidea.onlinestation.data.entities.request.GenderItem
 import com.nextidea.onlinestation.data.entities.request.QueryGenreBody
@@ -52,7 +53,7 @@ internal class GenreUseCaseImpl(private val genreRepository: GenreRepository) :
 
         when (result) {
             is DataResult.Success -> {
-                result.data?.let {
+                result.data.let {
                     val mappingListForUI = it.map { item ->
                         item.toDomain()
                     }
@@ -62,7 +63,7 @@ internal class GenreUseCaseImpl(private val genreRepository: GenreRepository) :
                     val lastPage = mappingListForUI.size < Constants.RADIOS_OFFSET
                     if (lastPage) offset = -1
                     DataResult.Success(Pair(genders, lastPage))
-                } ?: DataResult.Error(RadioException(errorDataNull))
+                }
             }
             is DataResult.Error -> {
                 DataResult.Error(RadioException(result.errors.errorCode))

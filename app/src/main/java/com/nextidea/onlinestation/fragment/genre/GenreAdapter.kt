@@ -12,9 +12,9 @@ import com.nextidea.onlinestation.appbase.adapter.BaseViewHolder
 import com.nextidea.onlinestation.databinding.ItemGenreBinding
 import com.nextidea.onlinestation.data.entities.request.GenderItem
 
-class GenreAdapter(val goToStationPage:(id:Long)->Unit) :
+class GenreAdapter(val goToStationPage:(id:Int)->Unit) :
     BaseAdapter<ViewBinding, GenderItem, BaseViewHolder<GenderItem, ViewBinding>>(
-        ItemsDiffCallback { oldItem, newItem -> oldItem.id == newItem.id }
+        ItemsDiffCallback { oldItem, newItem -> oldItem.stationcount == newItem.stationcount }
     ) {
 
     override fun onCreateViewHolder(
@@ -35,7 +35,7 @@ class GenreAdapter(val goToStationPage:(id:Long)->Unit) :
             with(binding) {
                 genreName.text = item.name
                 Glide.with(context)
-                    .load(item.img)
+                    .load(item.isoCode)
                     .centerCrop()
                     .circleCrop()
                     .apply(
@@ -48,7 +48,7 @@ class GenreAdapter(val goToStationPage:(id:Long)->Unit) :
 
         }
         override fun onItemClick(item: GenderItem) {
-            goToStationPage.invoke(item.id)
+            goToStationPage.invoke(item.stationcount)
         }
     }
 

@@ -1,3 +1,9 @@
 package com.nextidea.onlinestation.data.entities
 
-data class RadioException<ErrorBody>(val errorCode: Int, val errorBody: ErrorBody? = null, val errorMessage:String?=null)
+import com.nextidea.onlinestation.data.util.RequestError
+
+data class RadioException(
+    val errorCode: Int,
+    val errorBody: RequestError? = null,
+    val errorMessage: String? = null
+): Exception(errorMessage)

@@ -2,6 +2,7 @@ package com.nextidea.onlinestation.appbase.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingConfig
 import com.nextidea.onlinestation.domain.entities.StationItem
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,4 +56,14 @@ abstract class BaseViewModel : ViewModel() {
             _swipeRefreshState.emit(state)
         }
     }
+
+    fun getBasePagingConfig(
+        pageSize: Int = 10,
+        prefetchDistance: Int = 20,
+        initialLoadSize: Int = 30
+    ) = PagingConfig(
+        pageSize = pageSize,
+        prefetchDistance = prefetchDistance,
+        initialLoadSize = initialLoadSize
+    )
 }

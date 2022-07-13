@@ -2,9 +2,7 @@ package com.nextidea.onlinestation.app
 
 import android.app.Application
 import com.nextidea.onlinestation.BuildConfig
-import com.nextidea.onlinestation.data.di.CacheModule
 import com.nextidea.onlinestation.data.di.DataModule
-import com.nextidea.onlinestation.data.di.databaseModule
 import com.nextidea.onlinestation.di.AppModule
 import com.nextidea.onlinestation.domain.DomainModule
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +23,7 @@ class OnlineRadioApp : Application() {
     }
 
     private val modules = listOf(
-        databaseModule,
+        //databaseModule,
         //apiModule,
         //repositoryModule,
         AppModule().module,

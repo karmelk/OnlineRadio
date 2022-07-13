@@ -10,11 +10,9 @@ import retrofit2.http.Query
 
 interface AllApiService {
 
-    @GET("api/api.php")
-    suspend fun getGenreList(
-        @Query("method") method: String,
-        @Query("api_key") key: String
-    ): Response<ParentResponse<ResponseGender>>
+    @GET("countries")
+    suspend fun getGenreList( @Query("limit") per_page: Int?,
+                              @Query("offset") page: Int?): Response<List<ResponseGender>>
 
     @GET("api/api.php")
     suspend fun getStationsByGenreId(
