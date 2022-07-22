@@ -36,7 +36,7 @@ internal class GenreRepositoryImpl(
         }
     }
 
-    override suspend fun getGenreListDataByPaging(): Flow<PagingData<GenderItem>> {
+    override fun getGenreListDataByPaging(): PagingSource<Int, GenderItem>  {
         return CountryPagingSource.Factory().create(allApiService)
     }
 

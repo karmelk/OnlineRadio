@@ -68,6 +68,7 @@ dependencies {
     implementation libraries.koinAnnotations
     ksp libraries.kspCompiler
     implementation libraries.paging
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
 //    implementation "io.insert-koin:koin-android:3.2.0-beta-1"
 //    implementation "io.insert-koin:koin-annotations:1.0.0-beta-1"
 //    ksp  "io.insert-koin:koin-ksp-compiler:1.0.0-beta-1"

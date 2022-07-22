@@ -31,16 +31,14 @@ class GenreViewModel(private val genreUseCase: GenreInteractorUseCase, private v
     private val _isLastPage by lazy { MutableSharedFlow<Boolean>() }
     val isLastPage = _isLastPage.asSharedFlow()
 
+    private val _query:MutableStateFlow<List<GenderItem>?> by lazy { MutableStateFlow(null) }
 
-    val query: StateFlow<GenderItem> = _query.asStateFlow()
-
-
-    val data = emptyList<GenderItem>()
+    val data = _query
         .map{ newPager() }
-        .flatMap { it.flow }
-        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+        .flatMapLatest{ it.flow }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty()).cachedIn(viewModelScope)
 
-    private suspend fun newPager(): PagingData<GenderItem> {
+    private fun newPager(): Pager<Int, GenderItem> {
         return Pager(PagingConfig(30, enablePlaceholders = false, prefetchDistance = 10)) {
             countryPagingSource.getGenreListDataByPaging()
         }
@@ -48,27 +46,27 @@ class GenreViewModel(private val genreUseCase: GenreInteractorUseCase, private v
 
 
     fun getGenreList(update: Boolean = false) {
-        viewModelScope.launch() {
-
-            when (val result = genreUseCase(update, _getGenderData.value)) {
-                is DataResult.Success -> {
-                    result.data?.let {
-                        result.data?.let {
-                            _getGenderData.value = it.first
-                            _isLastPage.emit(it.second)
-                        }
-                    }
-
-                }
-                is DataResult.Error -> {
-                    if (result.errors.errorCode == NO_INTERNET_CONNECTION) {
-                        showNotNetworksConnection()
-                    }
-                    _errorGenderData.emit(Unit)
-                }
-            }
-            isShowEmptyData(_getGenderData.value.isNullOrEmpty())
-            swipeRefreshState(false)
-        }
+//        viewModelScope.launch() {
+//
+//            when (val result = genreUseCase(update, _getGenderData.value)) {
+//                is DataResult.Success -> {
+//                    result.data?.let {
+//                        result.data?.let {
+//                            _getGenderData.value = it.first
+//                            _isLastPage.emit(it.second)
+//                        }
+//                    }
+//
+//                }
+//                is DataResult.Error -> {
+//                    if (result.errors.errorCode == NO_INTERNET_CONNECTION) {
+//                        showNotNetworksConnection()
+//                    }
+//                    _errorGenderData.emit(Unit)
+//                }
+//            }
+//            isShowEmptyData(_getGenderData.value.isNullOrEmpty())
+//            swipeRefreshState(false)
+//        }
     }
 }

@@ -8,14 +8,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.nextidea.onlinestation.R
 import com.nextidea.onlinestation.appbase.adapter.BaseAdapter
+import com.nextidea.onlinestation.appbase.adapter.BasePagingAdapter
 import com.nextidea.onlinestation.appbase.adapter.BaseViewHolder
 import com.nextidea.onlinestation.databinding.ItemGenreBinding
 import com.nextidea.onlinestation.data.entities.request.GenderItem
 
 class GenreAdapter(val goToStationPage:(id:Int)->Unit) :
-    BaseAdapter<ViewBinding, GenderItem, BaseViewHolder<GenderItem, ViewBinding>>(
-        ItemsDiffCallback { oldItem, newItem -> oldItem.stationcount == newItem.stationcount }
-    ) {
+    BasePagingAdapter<ViewBinding, GenderItem, BaseViewHolder<GenderItem, ViewBinding>>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

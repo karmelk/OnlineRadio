@@ -1,5 +1,6 @@
 package com.nextidea.onlinestation.data.repository
 
+import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.nextidea.onlinestation.data.entities.DataResult
@@ -11,7 +12,7 @@ import java.util.concurrent.Flow
 
 interface GenreRepository {
     suspend fun getGenreListData(queryBody: QueryGenreBody): DataResult<List<ResponseGender>>
-    suspend fun getGenreListDataByPaging(): Flow<PagingData<GenderItem>>
+    fun getGenreListDataByPaging(): PagingSource<Int, GenderItem>
     suspend fun checkStationInDB(itemId: Int) : StationItemDb?
 
 }

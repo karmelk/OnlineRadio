@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.nextidea.onlinestation.R
 import com.nextidea.onlinestation.appbase.FragmentBaseMVVM
+import com.nextidea.onlinestation.appbase.adapter.LoadingState
 import com.nextidea.onlinestation.appbase.utils.viewBinding
 import com.nextidea.onlinestation.databinding.FragmentGenreBinding
 import com.nextidea.onlinestation.utils.gone
@@ -38,24 +39,57 @@ class GenreFragment : FragmentBaseMVVM<GenreViewModel, FragmentGenreBinding>(),
                 navigateFragment(R.id.navigation_stations_by_genre_id, bundleOf("genderId" to it))
             }
             rvGenre.adapter = mAdapter
-            rvGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    val visibleItemCount = layoutManager.childCount
-                    val totalItemCount = layoutManager.itemCount
-                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    Log.d("Scroll", "onScrolled: $enableLoading $lastPage")
-                    if (!enableLoading && !lastPage) {
-                        if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
-                            && firstVisibleItemPosition >= 0
-                        ) {
-                            // Log.d("Scroll", "onScrolled: $enableLoading $lastPage")
-                            enableLoading = true
-                            viewModel.getGenreList()
-                        }
+            mAdapter.observeLoadState(viewLifecycleOwner) { state, exception ->
+                when (state) {
+                    LoadingState.LOADED -> {
+//                        if (binding.recordsProgressControl.isVisible())
+//                            viewModel.animateWhiteProgress(false)
+//                        identityState(adapter.snapshot().items)
+                        Log.i("LoadingState", "onView: LOADED")
+                    }
+                    LoadingState.LOADING -> {
+//                        if (!binding.recordsProgressControl.isVisible())
+//                            viewModel.animateWhiteProgress(true)
+                        Log.i("LoadingState", "onView: LOADING")
+                    }
+                    LoadingState.ERROR -> {
+//                        exception?.run {
+//                            if (binding.recordsProgressControl.isVisible())
+//                                viewModel.animateWhiteProgress(false)
+//
+//                            viewModel.callData(ActionResult.Error(this))
+//
+//                            if (errorCode == Constants.ERROR_NOT_NETWORK) {
+//                                showErrorInfoControl(getString(R.string.net_error_no_connection)) {
+//                                    adapter.retry()
+//                                }
+//                            } else {
+//                                toast(getString(R.string.net_error_default))
+//                            }
+//                        }
+                        Log.i("LoadingState", "onView: ERROR")
                     }
                 }
-            })
+            }
+//            rvGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                    super.onScrolled(recyclerView, dx, dy)
+//                    val visibleItemCount = layoutManager.childCount
+//                    val totalItemCount = layoutManager.itemCount
+//                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+//                    Log.d("Scroll", "onScrolled: $enableLoading $lastPage")
+//                    if (!enableLoading && !lastPage) {
+//                        if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
+//                            && firstVisibleItemPosition >= 0
+//                        ) {
+//                            // Log.d("Scroll", "onScrolled: $enableLoading $lastPage")
+//                            enableLoading = true
+//                            viewModel.getGenreList()
+//                        }
+//                    }
+//                }
+//            })
+
         }
     }
 
@@ -73,9 +107,9 @@ class GenreFragment : FragmentBaseMVVM<GenreViewModel, FragmentGenreBinding>(),
                 }
             }
 
-            onEach(getGender) {
-                mAdapter.submitList(it)
-            }
+//            onEach(getGender) {
+//                mAdapter.submitData(lifecycle, it)
+//            }
 
             onEach(swipeRefreshState) {
                 binding.swipeRefresh.isRefreshing = it
@@ -88,8 +122,8 @@ class GenreFragment : FragmentBaseMVVM<GenreViewModel, FragmentGenreBinding>(),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            movies.collectLatest() {
-
+            onEach(viewModel.data) {
+                mAdapter.submitData(lifecycle, it)
             }
             onEach(isLastPage) {
                 Log.d("Scroll", "onScrolled:IsLastePage $it ")
